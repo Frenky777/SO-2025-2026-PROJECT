@@ -9,20 +9,45 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <errno.h>
+#include <time.h>
+#include <signal.h>
 
-//(ftok)
-#define ID_PROJEKTU 'M' 
+#define ID_PROJEKTU 'M'
+#define MAX_WAGA_TASMY 400.0   // M 
+#define POJEMNOSC_TASMY 10     // K 
+#define MAX_WAGA_PACZKI 25.0   //
+#define LADOWNOSC_CI 1000.0    // W 
+#define OBJETOSC_CI 500        // V 
 
+// --- SEMAFORY 
+#define SEM_MUTEX 0      // Chroni pamięć
+#define SEM_WOLNE 1      // Liczy wolne miejsca na taśmie
+#define SEM_ZAJETE 2     // Liczy paczki na taśmie 
+#define LICZBA_SEM 3
 
 typedef struct {
-    int liczba_paczek_na_tasmie;
-    double aktualna_waga_na_tasmie;
-    int czy_ciezarowka_jest_dostepna;
+    int id_pracownika;   
+    char typ;            
+    double waga;        
+    int objetosc;        
+} Paczka;
+
+typedef struct {
+    // kolejka FIFO
+    Paczka tasma[POJEMNOSC_TASMY];
+    int head; // bierze ciężarówka
+    int tail; // kładzie pracownik
+    int ile_paczek;
+    double aktualna_waga_tasmy;
     
+
+    int koniec_pracy;
 } Magazyn;
 
 
-#define SEM_DOSTEP_DO_PAMIECI 0  // Mutex 
-#define SEM_PELNA_TASMA 1        // Miejsce na taśmie
+void sem_p(int semid, int sem_num); // Czekaj (Opuść)
+void sem_v(int semid, int sem_num); // Sygnalizuj (Podnieś)
+
+
 
 #endif
