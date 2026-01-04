@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <time.h>
 #include <signal.h>
+//ftok
 
 #define ID_PROJEKTU 'M'
 #define MAX_WAGA_TASMY 400.0   // M 
