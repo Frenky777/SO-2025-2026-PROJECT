@@ -30,7 +30,7 @@ truck: truck.c sem.c
 dispatcher: dispatcher.c sem.c
 	gcc -o dispatcher dispatcher.c sem.c -pthread
 
-#buduje wszystko naraz
+#buduje wszystko naraznbmh 
 all: main worker fast_worker truck dispatcher
 
 g: main worker truck

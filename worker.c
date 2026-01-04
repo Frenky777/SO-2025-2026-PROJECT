@@ -8,8 +8,10 @@ int main(int argc, char *argv[]) {
     } else {
         id_prac = 1; 
     }
-    
-    srand(time(NULL) ^ getpid()); 
+    // srand(time(NULL) ^ getpid());
+    srand(time(NULL) ^ (getpid() * 1000));
+
+
 
     // podlaczenie do pamieci wspoldzielonej i zasobow
     key_t key = ftok(".", ID_PROJEKTU);

@@ -25,8 +25,8 @@ int main() {
         mag->ile_paczek--;
         mag->aktualna_waga_tasmy -= p.waga;
 
-        printf("CIEZAROWKA: Biorę %c od P%d. Waga tasmy: %.1f\n", 
-               p.typ, p.id_pracownika, mag->aktualna_waga_tasmy);
+        printf("CIEZAROWKA: Biorę %c od P%d. Waga tasmy: %.1f Stan: %d/%d\n", 
+               p.typ, p.id_pracownika, mag->aktualna_waga_tasmy, mag->ile_paczek, POJEMNOSC_TASMY);
 
         waga_ladunku += p.waga;
         obj_ladunku += p.objetosc;
