@@ -8,8 +8,7 @@ int main(int argc, char *argv[]) {
     } else {
         id_prac = 1; 
     }
-    // srand(time(NULL) ^ getpid());
-    srand(time(NULL) ^ (getpid() * 1000));
+     srand(time(NULL) ^ getpid());
 
 
 
@@ -34,19 +33,29 @@ int main(int argc, char *argv[]) {
         p.id_pracownika = id_prac;
         
 
-        int los = rand() % 3; 
-        if (los == 0) { p.typ = 'A'; p.objetosc = 10; } 
-        else if (los == 1) { p.typ = 'B'; p.objetosc = 20; } 
-        else { p.typ = 'C'; p.objetosc = 40; } 
-        
-
-        p.waga = ((double)(rand() % 250) / 10.0) + 0.1;
-
+        if (id_prac == 1) {
+            // P1 robi tylko małe A
+            p.typ = 'A';
+            p.objetosc = 10; 
+            // Waga 0.1 - 5.0 kg
+            p.waga = ((rand() % 50) / 10.0) + 0.1;
+        }
+        else if (id_prac == 2) {
+            // P2 robi tylko średnie B
+            p.typ = 'B';
+            p.objetosc = 20;
+            // Waga 5.0 - 15.0 kg
+            p.waga = ((rand() % 100) / 10.0) + 5.0;
+        }
+        else {
+            // P3 robi tylko duże C 
+            p.typ = 'C';
+            p.objetosc = 40;
+            // Waga 15.0 - 25.0 kg
+            p.waga = ((rand() % 100) / 10.0) + 15.0;
+        }
         sleep(1); 
 
-        // kladzenie na tasmie
-        
-        // czekanie na wolne miejsce
         sem_p(semid, SEM_WOLNE);
         // blokowanie pamieci
         sem_p(semid, SEM_MUTEX);

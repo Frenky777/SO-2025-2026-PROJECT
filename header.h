@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <time.h>
 #include <signal.h>
+#include <sys/time.h>
 //ftok
 
 #define ID_PROJEKTU 'M'
