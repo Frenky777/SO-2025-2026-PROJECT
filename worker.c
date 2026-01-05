@@ -56,20 +56,35 @@ int main(int argc, char *argv[]) {
         }
         sleep(1); 
 
-        sem_p(semid, SEM_WOLNE);
-        // blokowanie pamieci
-        sem_p(semid, SEM_MUTEX);
+        while (1) {
+            if (mag->koniec_pracy) break;
 
+            // slot ilościowy
+            sem_p(semid, SEM_WOLNE);
+            // blokowanie pamieci
+            sem_p(semid, SEM_MUTEX);
 
-        if (mag->aktualna_waga_tasmy + p.waga > MAX_WAGA_TASMY) {
-            printf("P%d: Za ciezko (%.1f kg)! Czekam...\n", id_prac, mag->aktualna_waga_tasmy);
-            
-        
-            sem_v(semid, SEM_MUTEX);
-            sem_v(semid, SEM_WOLNE); 
-            sleep(1); 
-            continue; 
-        }
+            // limit wagowy check
+            if (mag->aktualna_waga_tasmy + p.waga <= MAX_WAGA_TASMY) {
+                
+                mag->tasma[mag->tail] = p;
+                mag->tail = (mag->tail + 1) % POJEMNOSC_TASMY;
+                mag->ile_paczek++;
+                mag->aktualna_waga_tasmy += p.waga;
+
+                printf("P%d: Polozyl %c (%.1f kg). Stan tasmy: %d/%d (%.1f kg)\n", 
+                       id_prac, p.typ, p.waga, mag->ile_paczek, POJEMNOSC_TASMY, mag->aktualna_waga_tasmy);
+
+                sem_v(semid, SEM_MUTEX);
+                sem_v(semid, SEM_ZAJETE); // informujemy ciezarowke
+                break; 
+            } else {
+
+                sem_v(semid, SEM_MUTEX);
+                sem_v(semid, SEM_WOLNE); 
+
+                sleep(1); 
+            }
 
         // polozenie paczki
         mag->tasma[mag->tail] = p;
@@ -84,6 +99,7 @@ int main(int argc, char *argv[]) {
         sem_v(semid, SEM_MUTEX);
         sem_v(semid, SEM_ZAJETE);
     }
+}
 
     shmdt(mag);
     return 0;
