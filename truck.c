@@ -1,4 +1,11 @@
 #include "header.h"
+// flaga globalna
+volatile int wymuszony_odjazd = 0;
+
+void handle_sig1(int sig) {
+    wymuszony_odjazd = 1;
+}
+
 
 int main() {
     key_t key = ftok(".", ID_PROJEKTU);

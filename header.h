@@ -41,7 +41,9 @@ typedef struct {
     int tail; // kładzie pracownik
     int ile_paczek;
     double aktualna_waga_tasmy;
-    
+    double waga_ladunku_trucka; // zeby P4 wiedział ile jest
+    pid_t pid_truck;            // do sygnałów
+    pid_t pid_p4;
 
     int koniec_pracy;
 } Magazyn;
