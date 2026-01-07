@@ -27,15 +27,14 @@ int main() {
     printf("START SYSTEMU (Wersja Basic)\n");
 
     // Uruchamiamy ciężarówkę
+
     if (fork() == 0) { 
         execl("./truck", "truck", NULL); 
         exit(0); 
     }
     if (fork() == 0) { 
-        execl("./truck", "truck", NULL); exit(0); 
-    }
-    if (fork() == 0) { 
-        execl("./fast_worker", "fast_worker", NULL); exit(0);  //dla p4
+        execl("./fast_worker", "fast_worker", NULL); 
+        exit(0);  //dla p4
     }
     
     // Uruchamiamy 3 pracowników

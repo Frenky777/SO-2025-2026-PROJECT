@@ -86,11 +86,6 @@ int main(int argc, char *argv[]) {
                 sleep(1); 
             }
 
-        // polozenie paczki
-        mag->tasma[mag->tail] = p;
-        mag->tail = (mag->tail + 1) % POJEMNOSC_TASMY;
-        mag->ile_paczek++;
-        mag->aktualna_waga_tasmy += p.waga;
 
         printf("P%d: Dal paczke %c (%.1f kg). Stan: %d/%d\n", 
                id_prac, p.typ, p.waga, mag->ile_paczek, POJEMNOSC_TASMY);

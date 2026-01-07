@@ -8,6 +8,8 @@ void handle_sig1(int sig) {
 
 
 int main() {
+    signal(SIGUSR1, handle_sig1); //sygnal 1
+    
     key_t key = ftok(".", ID_PROJEKTU);
     int semid = semget(key, LICZBA_SEM, 0666);
     int shmid = shmget(key, sizeof(Magazyn), 0666);
