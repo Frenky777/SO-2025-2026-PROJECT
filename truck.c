@@ -38,6 +38,8 @@ int main() {
         waga_ladunku += p.waga;
         obj_ladunku += p.objetosc;
 
+        mag->waga_ladunku_trucka = waga_ladunku;// waga dla p4 w shared memory
+
         sem_v(semid, SEM_MUTEX);
         sem_v(semid, SEM_WOLNE); // Robimy miejsce na taśmie
 

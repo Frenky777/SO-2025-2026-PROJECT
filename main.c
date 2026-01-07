@@ -17,6 +17,7 @@ int main() {
     mag->ile_paczek = 0;
     mag->aktualna_waga_tasmy = 0.0;
     mag->koniec_pracy = 0;
+    mag->waga_ladunku_trucka = 0.0; //dla p4
 
     // Inicjalizacja semaforów
     semctl(semid, SEM_MUTEX, SETVAL, 1);       // Dostęp otwarty
@@ -29,6 +30,12 @@ int main() {
     if (fork() == 0) { 
         execl("./truck", "truck", NULL); 
         exit(0); 
+    }
+    if (fork() == 0) { 
+        execl("./truck", "truck", NULL); exit(0); 
+    }
+    if (fork() == 0) { 
+        execl("./fast_worker", "fast_worker", NULL); exit(0);  //dla p4
     }
     
     // Uruchamiamy 3 pracowników

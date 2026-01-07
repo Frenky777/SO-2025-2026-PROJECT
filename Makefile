@@ -33,7 +33,7 @@ dispatcher: dispatcher.c sem.c
 #buduje wszystko naraznbmh 
 all: main worker fast_worker truck dispatcher
 
-g: main worker truck
+g: main worker fast_worker truck
 
 # Sprzątanie
 clean:
