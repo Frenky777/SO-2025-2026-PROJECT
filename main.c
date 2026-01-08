@@ -23,6 +23,7 @@ int main() {
     semctl(semid, SEM_MUTEX, SETVAL, 1);       // Dostęp otwarty
     semctl(semid, SEM_WOLNE, SETVAL, POJEMNOSC_TASMY); // Cała taśma wolna
     semctl(semid, SEM_ZAJETE, SETVAL, 0);      // Brak paczek
+    semctl(semid, SEM_DOK, SETVAL, 1);
 
     printf("START SYSTEMU (Wersja Basic)\n");
 

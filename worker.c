@@ -87,12 +87,6 @@ int main(int argc, char *argv[]) {
             }
 
 
-        printf("P%d: Dal paczke %c (%.1f kg). Stan: %d/%d\n", 
-               id_prac, p.typ, p.waga, mag->ile_paczek, POJEMNOSC_TASMY);
-
-        // odblokowanie pamieci
-        sem_v(semid, SEM_MUTEX);
-        sem_v(semid, SEM_ZAJETE);
     }
 }
 

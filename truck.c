@@ -54,22 +54,19 @@ int main() {
 
         // Czy pełna?
         if (waga_ladunku >= LADOWNOSC_CI || obj_ladunku >= OBJETOSC_CI) {
-            printf("--- PELNA (%.1f kg) --- ODJEZDZAM ---\n", waga_ladunku);
-            sleep(2);
-            //reset liczników
-            waga_ladunku = 0;
-            obj_ladunku = 0;
-            printf("--- NOWA CIEZAROWKA ---\n");
+            printf("TRUCK %d: PELNA (%.1f kg) --- ODJEZDZAM ---\n", moj_pid, waga_ladunku);
+            break; // Wychodzimy z pętli -> koniec pracy tej ciężarówki
         }
         
         sleep(1);
     }
-    mag->pid_truck = 0;
-    
-    // zwolnienie miejsca dla kolejnej ciezarowki
+    printf("TRUCK %d: Opuszczam dok...\n", moj_pid);
+    sleep(2); // Czas na wyjazd
 
+    mag->pid_truck = 0;
+    mag->waga_ladunku_trucka = 0;
     sem_v(semid, SEM_DOK);
-    
+
     shmdt(mag);
     return 0;
 }
