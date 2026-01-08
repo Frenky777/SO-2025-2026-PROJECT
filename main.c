@@ -54,6 +54,23 @@ int main() {
     }
 
     while(1) {
+        int status;
+        
+        pid_t ended_pid = waitpid(-1, &status, WNOHANG);
+
+        if (ended_pid > 0) {
+            
+            printf("MAIN: Proces %d zakonczyl prace (Zombie usuniety).\n", ended_pid);
+
+            
+            
+            // nowa ciezarowka w miejsce starej
+            if (fork() == 0) {
+                execl("./truck", "truck", NULL);
+                exit(0);
+            }
+            printf("MAIN: Podstawiono nowa ciezarowke na miejsce starej.\n");
+        }
         sleep(1);
     }
     
