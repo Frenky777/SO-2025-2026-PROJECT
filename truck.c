@@ -17,9 +17,16 @@ int main() {
 
     double waga_ladunku = 0;
     int obj_ladunku = 0;
+    pid_t moj_pid = getpid();
+    printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd...\n", moj_pid);
 
-    printf("CIEZAROWKA: Podstawiona.\n");
+    sem_p(semid, SEM_DOK);
 
+    printf("TRUCK %d: Wjechalem pod rampe! Zaczynam zaladunek.\n", moj_pid);
+
+
+    mag->pid_truck = moj_pid;
+    mag->waga_ladunku_trucka = 0;
     while (1) {
         if (mag->koniec_pracy) break;
 
@@ -34,8 +41,8 @@ int main() {
         mag->ile_paczek--;
         mag->aktualna_waga_tasmy -= p.waga;
 
-        printf("CIEZAROWKA: Biorę %c od P%d. Waga tasmy: %.1f Stan: %d/%d\n", 
-               p.typ, p.id_pracownika, mag->aktualna_waga_tasmy, mag->ile_paczek, POJEMNOSC_TASMY);
+        printf("TRUCK %d: Biorę %c (%.1f kg). Stan: %.1f/%.0f\n", 
+               moj_pid, p.typ, p.waga, waga_ladunku + p.waga, LADOWNOSC_CI);
 
         waga_ladunku += p.waga;
         obj_ladunku += p.objetosc;
@@ -57,7 +64,12 @@ int main() {
         
         sleep(1);
     }
+    mag->pid_truck = 0;
+    
+    // zwolnienie miejsca dla kolejnej ciezarowki
 
+    sem_v(semid, SEM_DOK);
+    
     shmdt(mag);
     return 0;
 }

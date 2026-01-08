@@ -24,8 +24,9 @@
 // --- SEMAFORY 
 #define SEM_MUTEX 0      // Chroni pamięć
 #define SEM_WOLNE 1      // Liczy wolne miejsca na taśmie
-#define SEM_ZAJETE 2     // Liczy paczki na taśmie 
-#define LICZBA_SEM 3
+#define SEM_ZAJETE 2   
+#define SEM_DOK 3  // Liczy paczki na taśmie 
+#define LICZBA_SEM 4
 
 typedef struct {
     int id_pracownika;   
