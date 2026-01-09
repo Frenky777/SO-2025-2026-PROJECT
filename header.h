@@ -20,7 +20,7 @@
 #define MAX_WAGA_PACZKI 25.0   //
 #define LADOWNOSC_CI 1000.0    // W 
 #define OBJETOSC_CI 500        // V 
-
+#define LIMIT_CIEZAROWEK 3
 // --- SEMAFORY 
 #define SEM_MUTEX 0      // Chroni pamięć
 #define SEM_WOLNE 1      // Liczy wolne miejsca na taśmie

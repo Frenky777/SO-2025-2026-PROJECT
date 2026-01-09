@@ -35,7 +35,7 @@ int main() {
         exit(0);  //dla p4
     }
     // uruchamiamy 3 ciezarowki
-    for(int i=0; i<3; i++) {
+    for(int i=0; i<LIMIT_CIEZAROWEK; i++) {
         if (fork() == 0) { 
             char buf[15];
             execl("./truck", "truck", buf, NULL); 
@@ -52,24 +52,18 @@ int main() {
             exit(0);
         }
     }
-
-    while(1) {
+    int ukonczone_kursy = 0;
+    while(ukonczone_kursy < LIMIT_CIEZAROWEK) {
         int status;
         
         pid_t ended_pid = waitpid(-1, &status, WNOHANG);
 
         if (ended_pid > 0) {
             
-            printf("MAIN: Proces %d zakonczyl prace (Zombie usuniety).\n", ended_pid);
-
+           ukonczone_kursy++; // <--- 1. ZWIĘKSZAMY LICZNIK
             
-            
-            // nowa ciezarowka w miejsce starej
-            if (fork() == 0) {
-                execl("./truck", "truck", NULL);
-                exit(0);
-            }
-            printf("MAIN: Podstawiono nowa ciezarowke na miejsce starej.\n");
+            printf("MAIN: Ciezarowka %d skonczyla. Postep: %d/%d\n", 
+                   ended_pid, ukonczone_kursy, LIMIT_CIEZAROWEK);
         }
         sleep(1);
     }
