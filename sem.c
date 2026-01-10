@@ -23,3 +23,7 @@ void sem_v(int semid, int sem_num) {
         perror("Blad sem_v");
     }
 }
+
+void log_msg(int semid, const char *format, ...){ //logger
+
+}

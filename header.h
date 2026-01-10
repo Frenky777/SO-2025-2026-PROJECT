@@ -12,6 +12,7 @@
 #include <time.h>
 #include <signal.h>
 #include <sys/time.h>
+#include <stdarg.h>
 //ftok
 
 #define ID_PROJEKTU 'M'
@@ -53,6 +54,6 @@ typedef struct {
 void sem_p(int semid, int sem_num); // Czekaj (Opuść)
 void sem_v(int semid, int sem_num); // Sygnalizuj (Podnieś)
 
-
+void log_msg(int semid, const char *format, ...); //logger
 
 #endif
