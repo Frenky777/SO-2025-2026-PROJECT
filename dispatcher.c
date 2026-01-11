@@ -23,3 +23,24 @@ int main() {
     int wybor;
     printf("Twoj wybor: ");
     scanf("%d", &wybor);
+
+    if (wybor == 1) {
+        if (mag->pid_truck > 0) {
+            kill(mag->pid_truck, SIGUSR1);
+            printf("Wyslano rozkaz odjazdu do PID %d.\n", mag->pid_truck);
+        } else {
+            printf("Blad Brak ciezarowki\n");
+        }
+    } 
+    else if (wybor == 2) {
+        if (mag->pid_p4 > 0) {
+            kill(mag->pid_p4, SIGUSR2);
+            printf("Wyslano rozkaz ekspresu do PID %d.\n", mag->pid_p4);
+        } else {
+            printf("Blad Fast Workera\n");
+        }
+    }
+
+    shmdt(mag);
+    return 0;
+}
