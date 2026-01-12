@@ -25,9 +25,10 @@ int main() {
     semctl(semid, SEM_ZAJETE, SETVAL, 0);      // Brak paczek
     semctl(semid, SEM_DOK, SETVAL, 1);
 
-    printf("START SYSTEMU (Wersja Basic)\n");
+    printf("START SYSTEMU \n");
 
-    // Uruchamiamy ciężarówkę
+    clear_log(semid);
+
 
 
     if (fork() == 0) { 

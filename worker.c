@@ -72,11 +72,14 @@ int main(int argc, char *argv[]) {
                 mag->ile_paczek++;
                 mag->aktualna_waga_tasmy += p.waga;
 
-                printf("P%d: Polozyl %c (%.1f kg). Stan tasmy: %d/%d (%.1f kg)\n", 
-                       id_prac, p.typ, p.waga, mag->ile_paczek, POJEMNOSC_TASMY, mag->aktualna_waga_tasmy);
+
 
                 sem_v(semid, SEM_MUTEX);
                 sem_v(semid, SEM_ZAJETE); // informujemy ciezarowke
+                printf("P%d: Polozyl %c (%.1f kg). Stan: %d/%d\n", id_prac, p.typ, p.waga, mag->ile_paczek, POJEMNOSC_TASMY);
+                log_msg(semid, "Pracownik P%d polozyl paczke %c (%.1f kg). Waga tasmy: %.1f kg", 
+                        id_prac, p.typ, p.waga, mag->aktualna_waga_tasmy);
+
                 break; 
             } else {
 

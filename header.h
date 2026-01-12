@@ -21,7 +21,11 @@
 #define MAX_WAGA_PACZKI 25.0   //
 #define LADOWNOSC_CI 1000.0    // W 
 #define OBJETOSC_CI 500        // V 
-#define LIMIT_CIEZAROWEK 3
+
+
+#define LIMIT_CIEZAROWEK 3 //limit ciezarowek
+
+
 // --- SEMAFORY 
 #define SEM_MUTEX 0      // Chroni pamięć
 #define SEM_WOLNE 1      // Liczy wolne miejsca na taśmie
@@ -55,5 +59,6 @@ void sem_p(int semid, int sem_num); // Czekaj (Opuść)
 void sem_v(int semid, int sem_num); // Sygnalizuj (Podnieś)
 
 void log_msg(int semid, const char *format, ...); //logger
+void clear_log(int semid); //celaner do logow
 
 #endif

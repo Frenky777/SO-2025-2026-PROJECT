@@ -41,8 +41,7 @@ int main() {
         mag->ile_paczek--;
         mag->aktualna_waga_tasmy -= p.waga;
 
-        printf("TRUCK %d: Biorę %c (%.1f kg). Stan: %.1f/%.0f\n", 
-               moj_pid, p.typ, p.waga, waga_ladunku + p.waga, LADOWNOSC_CI);
+
 
         waga_ladunku += p.waga;
         obj_ladunku += p.objetosc;
@@ -52,6 +51,9 @@ int main() {
         sem_v(semid, SEM_MUTEX);
         sem_v(semid, SEM_WOLNE); // Robimy miejsce na taśmie
 
+        printf("TRUCK %d: Biorę %c (%.1f kg). Ladunek: %.1f kg\n", moj_pid, p.typ, p.waga, waga_ladunku);
+        log_msg(semid, "Truck %d zabral paczke %c (%.1f kg). Stan ladunku: %.1f kg", 
+                moj_pid, p.typ, p.waga, waga_ladunku);
         // Czy pełna?
         if (waga_ladunku >= LADOWNOSC_CI || obj_ladunku >= OBJETOSC_CI) {
             printf("TRUCK %d: PELNA (%.1f kg) --- ODJEZDZAM ---\n", moj_pid, waga_ladunku);
