@@ -14,16 +14,28 @@ int main() {
 
     mag->pid_p4 = getpid(); 
     printf("P4 (Ekspres): Czekam na wezwanie (PID: %d)\n", getpid());
-
+    srand(time(NULL) ^ getpid()); // do losowania
     while (1) {
         if (mag->koniec_pracy) break;
 
         if (mam_robote) {
-            sem_p(semid, SEM_MUTEX);
-            // P4 ładuje bezpośrednio na trucka 
-            double waga_ekspresu = 10.0;
-            mag->waga_ladunku_trucka += waga_ekspresu;
-            printf("P4: ZALADOWALEM! Stan trucka: %.1f kg\n", mag->waga_ladunku_trucka);
+             if (mag->pid_truck > 0) {
+
+                double waga_ekspresu = (rand() % 230) / 10.0 + 1.0; 
+                
+                //sprawdzanie czy paczka wejdzie
+                if (mag->waga_ladunku_trucka + waga_ekspresu <= LADOWNOSC_CI) {
+                    mag->waga_ladunku_trucka += waga_ekspresu;
+                    printf("P4 (Ekspres): WRZUCILEM PACZKE %.1f kg! Stan trucka: %.1f kg\n", 
+                           waga_ekspresu, mag->waga_ladunku_trucka);
+                    log_msg(semid, "P4 wrzucil ekspres %.1f kg. Stan trucka: %.1f kg", 
+                            waga_ekspresu, mag->waga_ladunku_trucka);
+                } else {
+                    printf("P4: Ciężarówka pełna, nie zmieściłem ekspresu!\n");
+                }
+            } else {
+                printf("P4: Brak ciężarówki w doku! Czekam na następną.\n");
+            }
             sem_v(semid, SEM_MUTEX);
             
             mam_robote = 0;

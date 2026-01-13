@@ -53,21 +53,26 @@ int main() {
             exit(0);
         }
     }
-    int ukonczone_kursy = 0;
-    while(ukonczone_kursy < LIMIT_CIEZAROWEK) {
-        int status;
-        
-        pid_t ended_pid = waitpid(-1, &status, WNOHANG);
 
-        if (ended_pid > 0) {
-            
-           ukonczone_kursy++; // <--- 1. ZWIĘKSZAMY LICZNIK
-            
-            printf("MAIN: Ciezarowka %d skonczyla. Postep: %d/%d\n", 
-                   ended_pid, ukonczone_kursy, LIMIT_CIEZAROWEK);
-        }
-        sleep(1);
+
+
+    while (wait(NULL) > 0); 
+    
+    printf("\nMAIN: Wszystkie procesy zakończyły pracę. Sprzątam system...\n");
+
+
+    if (semctl(semid, 0, IPC_RMID) == -1) {
+        perror("Błąd usuwania semaforów");
+    } else {
+        printf("MAIN: Semafory usunięte.\n");
+    }
+
+    if (shmctl(shmid, IPC_RMID, NULL) == -1) {
+        perror("Błąd usuwania pamięci dzielonej");
+    } else {
+        printf("MAIN: Pamięć dzielona usunięta.\n");
     }
     
+    printf("MAIN: Koniec programu.\n");
     return 0;
 }
