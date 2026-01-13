@@ -4,11 +4,31 @@
 int main() {
     // Tworzenie pliku klucza do ftok
     system("touch ."); 
+
+    if (system("touch .") == -1) {
+        perror("MAIN BLAD: Nie udalo sie utworzyc pliku klucza");
+        exit(1);
+    }
+
     key_t key = ftok(".", ID_PROJEKTU);
 
+    if (key == -1) {
+        perror("MAIN BLAD: ftok");
+        exit(1);
+    }
     // Alokacja
     int shmid = shmget(key, sizeof(Magazyn), IPC_CREAT | 0666);
+    if (shmid == -1) {
+        perror("MAIN BLAD: shmget pamiec");
+        exit(1);
+    }
     int semid = semget(key, LICZBA_SEM, IPC_CREAT | 0666);
+
+    if (semid == -1) {
+        perror("MAIN BLAD: semget semafor");
+        shmctl(shmid, IPC_RMID, NULL);
+        exit(1);
+    }
     
     // Inicjalizacja pamięci
     Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);

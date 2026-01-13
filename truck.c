@@ -22,7 +22,10 @@ int main() {
     
     // PĘTLA GŁÓWNA 
     while (1) {
-        if (mag->koniec_pracy) break;
+        if (mag->koniec_pracy && mag->ile_paczek == 0) {
+        printf("TRUCK %d: Koniec zmiany i taśma pusta. Odjeżdżam.\n", getpid());
+        break;
+}
 
        
         printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd\n", moj_pid);
@@ -43,7 +46,10 @@ int main() {
 
         // PĘTLA ZAŁADUNKU PACZEK
         while (1) {
-            if (mag->koniec_pracy) break;
+            if (mag->koniec_pracy && mag->ile_paczek == 0) {
+            printf("TRUCK %d: Koniec pracy i taśma pusta. Zjeżdżam.\n", getpid());
+            break;
+}
             
            
             if (wymuszony_odjazd) {
@@ -54,15 +60,33 @@ int main() {
             
             sem_p(semid, SEM_MUTEX);
             double aktualna_waga_calosc = mag->waga_ladunku_trucka;
+            int aktualna_obj_calosc = mag->objetosc_ladunku_trucka; 
             sem_v(semid, SEM_MUTEX);
 
-            if (aktualna_waga_calosc >= LADOWNOSC_CI || obj_ladunku >= OBJETOSC_CI) {
-                printf("TRUCK %d: PELNA (%.1f kg) --- ODJEZDZAM ---\n", moj_pid, aktualna_waga_calosc);
+            
+            if (aktualna_waga_calosc >= LADOWNOSC_CI || aktualna_obj_calosc >= OBJETOSC_CI) {
+                printf("TRUCK %d: PELNA (%.1f kg / %d cm3) --- ODJEZDZAM ---\n", 
+                       moj_pid, aktualna_waga_calosc, aktualna_obj_calosc);
                 break;
             }
 
-          
+            errno = 0; 
             sem_p(semid, SEM_ZAJETE);
+
+
+            if (errno == EINTR) {
+                if (wymuszony_odjazd) {
+                     break; 
+                }
+                continue; 
+            }
+
+
+            if (wymuszony_odjazd) {
+                sem_v(semid, SEM_ZAJETE); 
+                break;
+            }
+            
 
            
             if (wymuszony_odjazd) {
@@ -80,6 +104,7 @@ int main() {
 
             
             mag->waga_ladunku_trucka += p.waga; 
+            mag->objetosc_ladunku_trucka += p.objetosc;
             
             
             waga_ladunku = mag->waga_ladunku_trucka; 
@@ -101,6 +126,7 @@ int main() {
         sem_p(semid, SEM_MUTEX);
         mag->pid_truck = 0;          
         mag->waga_ladunku_trucka = 0; 
+        mag->objetosc_ladunku_trucka = 0;
         sem_v(semid, SEM_MUTEX);
         
         sem_v(semid, SEM_DOK); // dla innej ciężarówki
@@ -113,7 +139,7 @@ int main() {
         printf("TRUCK %d: Wracam do magazynu\n", moj_pid);
     }
 
-    shmdt(mag);
+
 
     shmdt(mag);
     return 0;
