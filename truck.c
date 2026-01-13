@@ -13,6 +13,10 @@ int main() {
     key_t key = ftok(".", ID_PROJEKTU);
     int semid = semget(key, LICZBA_SEM, 0666);
     int shmid = shmget(key, sizeof(Magazyn), 0666);
+    if (shmid == -1 || semid == -1) {
+        perror("TRUCK BLAD: Brak zasobow");
+        exit(1);
+    }
     Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);
 
     double waga_ladunku = 0;
@@ -95,7 +99,13 @@ int main() {
             }
 
             sem_p(semid, SEM_MUTEX);
-            
+
+            if (mag->ile_paczek <= 0) {
+                sem_v(semid, SEM_MUTEX);
+               
+                if (mag->koniec_pracy) break;
+                continue;
+            }
             // Pobieramy paczkę
             Paczka p = mag->tasma[mag->head];
             mag->head = (mag->head + 1) % POJEMNOSC_TASMY;

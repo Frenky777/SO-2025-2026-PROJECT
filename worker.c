@@ -64,6 +64,12 @@ int main(int argc, char *argv[]) {
             // blokowanie pamieci
             sem_p(semid, SEM_MUTEX);
 
+            if (mag->koniec_pracy) {
+            sem_v(semid, SEM_MUTEX); // Oddaj mutex
+            sem_v(semid, SEM_WOLNE); // Oddaj slot 
+            break; // Wyjdź z pętli
+            }
+
             // limit wagowy check
             if (mag->aktualna_waga_tasmy + p.waga <= MAX_WAGA_TASMY) {
                 

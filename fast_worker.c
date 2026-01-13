@@ -10,15 +10,24 @@ int main() {
     key_t key = ftok(".", ID_PROJEKTU);
     int semid = semget(key, LICZBA_SEM, 0666);
     int shmid = shmget(key, sizeof(Magazyn), 0666);
+    if (shmid == -1 || semid == -1) {
+        perror("P4 BLAD: Brak zasobow");
+        exit(1);
+    }
     Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);
 
+    sem_p(semid, SEM_MUTEX);
     mag->pid_p4 = getpid(); 
+    sem_v(semid, SEM_MUTEX);
+
     printf("P4: Czekam na wezwanie (PID: %d)\n", getpid());
     srand(time(NULL) ^ getpid()); // do losowania
+
     while (1) {
         if (mag->koniec_pracy) break;
 
         if (mam_robote) {
+            sem_p(semid, SEM_MUTEX);
              if (mag->pid_truck > 0) {
 
                 double waga_ekspresu = (rand() % 230) / 10.0 + 1.0; 
@@ -40,6 +49,7 @@ int main() {
             
             mam_robote = 0;
         }
+        sleep(1);
     }
     return 0;
 }

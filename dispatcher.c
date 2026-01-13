@@ -47,7 +47,7 @@ int main() {
             mag->koniec_pracy = 1;
             sem_v(semid, SEM_MUTEX);
             printf("Budzenie procesów\n");
-            for(int i=0; i < POJEMNOSC_TASMY + 5; i++) {
+            for(int i=0; i < POJEMNOSC_TASMY ; i++) {
                 sem_v(semid, SEM_WOLNE); 
                 sem_v(semid, SEM_ZAJETE); 
             } // troche prymitywne ale jak na ten moment dziala 
