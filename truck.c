@@ -130,7 +130,7 @@ int main() {
             //sleep(1); 
         }
 
-        // 3. Wyjazd z doku (Koniec kursu)
+        // Wyjazd 
         printf("TRUCK %d: Opuszczam dok\n", moj_pid);
         
         sem_p(semid, SEM_MUTEX);

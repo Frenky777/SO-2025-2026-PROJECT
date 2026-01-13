@@ -1,7 +1,7 @@
 #include "header.h"
 
 int main() {
-    // 1. Podłączamy się do istniejącej pamięci (bez tworzenia nowej!)
+
     key_t key = ftok(".", ID_PROJEKTU);
     int semid = semget(key, LICZBA_SEM, 0666); // pobranie semaforow
     int shmid = shmget(key, sizeof(Magazyn), 0666);
