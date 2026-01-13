@@ -58,7 +58,7 @@ int main() {
 
     while (wait(NULL) > 0); 
     
-    printf("\nMAIN: Wszystkie procesy zakończyły pracę. Sprzątam system...\n");
+    printf("\nMAIN: Wszystkie procesy zakończyły pracę. Sprzątam system\n");
 
 
     if (semctl(semid, 0, IPC_RMID) == -1) {

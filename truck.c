@@ -18,14 +18,14 @@ int main() {
     double waga_ladunku = 0;
     int obj_ladunku = 0;
     pid_t moj_pid = getpid();
-    printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd...\n", moj_pid);
+    printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd\n", moj_pid);
     
     // PĘTLA GŁÓWNA 
     while (1) {
         if (mag->koniec_pracy) break;
 
        
-        printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd...\n", moj_pid);
+        printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd\n", moj_pid);
         sem_p(semid, SEM_DOK);
 
       
@@ -35,7 +35,7 @@ int main() {
         wymuszony_odjazd = 0;          
         sem_v(semid, SEM_MUTEX);
 
-        printf("TRUCK %d: Podstawiony pod rampe! Zaczynam zaladunek.\n", moj_pid);
+        printf("TRUCK %d: Podstawiony pod rampe Zaczynam zaladunek\n", moj_pid);
 
         
         waga_ladunku = 0;
@@ -47,7 +47,7 @@ int main() {
             
            
             if (wymuszony_odjazd) {
-                printf("TRUCK %d: Otrzymalem nakaz odjazdu (Sygnał 1)!\n", moj_pid);
+                printf("TRUCK %d: Otrzymalem nakaz odjazdu \n", moj_pid);
                 break; 
             }
 
@@ -92,11 +92,11 @@ int main() {
             log_msg(semid, "Truck %d zabral paczke %c (%.1f kg). Stan ladunku: %.1f kg", 
                     moj_pid, p.typ, p.waga, waga_ladunku);
             
-            sleep(1); 
+            //sleep(1); 
         }
 
         // 3. Wyjazd z doku (Koniec kursu)
-        printf("TRUCK %d: Opuszczam dok...\n", moj_pid);
+        printf("TRUCK %d: Opuszczam dok\n", moj_pid);
         
         sem_p(semid, SEM_MUTEX);
         mag->pid_truck = 0;          
@@ -108,9 +108,9 @@ int main() {
         if (mag->koniec_pracy) break;
 
 
-        printf("TRUCK %d: Rozwożę towar... znikam na 5s\n", moj_pid);
+        printf("TRUCK %d: Rozwożę towar znikam na 5s\n", moj_pid);
         sleep(5); 
-        printf("TRUCK %d: Wracam do magazynu!\n", moj_pid);
+        printf("TRUCK %d: Wracam do magazynu\n", moj_pid);
     }
 
     shmdt(mag);

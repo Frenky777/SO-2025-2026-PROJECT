@@ -13,7 +13,7 @@ int main() {
     Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);
 
     mag->pid_p4 = getpid(); 
-    printf("P4 (Ekspres): Czekam na wezwanie (PID: %d)\n", getpid());
+    printf("P4: Czekam na wezwanie (PID: %d)\n", getpid());
     srand(time(NULL) ^ getpid()); // do losowania
     while (1) {
         if (mag->koniec_pracy) break;
@@ -26,15 +26,15 @@ int main() {
                 //sprawdzanie czy paczka wejdzie
                 if (mag->waga_ladunku_trucka + waga_ekspresu <= LADOWNOSC_CI) {
                     mag->waga_ladunku_trucka += waga_ekspresu;
-                    printf("P4 (Ekspres): WRZUCILEM PACZKE %.1f kg! Stan trucka: %.1f kg\n", 
+                    printf("P4: WRZUCILEM PACZKE %.1f kg Stan trucka: %.1f kg\n", 
                            waga_ekspresu, mag->waga_ladunku_trucka);
                     log_msg(semid, "P4 wrzucil ekspres %.1f kg. Stan trucka: %.1f kg", 
                             waga_ekspresu, mag->waga_ladunku_trucka);
                 } else {
-                    printf("P4: Ciężarówka pełna, nie zmieściłem ekspresu!\n");
+                    printf("P4: Ciężarówka pełna, nie zmieściłem ekspresu\n");
                 }
             } else {
-                printf("P4: Brak ciężarówki w doku! Czekam na następną.\n");
+                printf("P4: Brak ciężarówki w doku Czekam na następną\n");
             }
             sem_v(semid, SEM_MUTEX);
             

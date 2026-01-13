@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
             // Waga 15.0 - 25.0 kg
             p.waga = ((rand() % 100) / 10.0) + 15.0;
         }
-        sleep(1); 
+        //sleep(1); 
 
         while (1) {
             if (mag->koniec_pracy) break;
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
                 sem_v(semid, SEM_MUTEX);
                 sem_v(semid, SEM_WOLNE); 
 
-                sleep(1); 
+                //sleep(1); 
             }
 
 

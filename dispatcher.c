@@ -41,12 +41,12 @@ int main() {
         } 
     }
     else if (wybor == 3) {
-            printf("--> ZAMYKANIE SYSTEMU...\n");
+            printf("ZAMYKANIE SYSTEMU\n");
             
             sem_p(semid, SEM_MUTEX);
             mag->koniec_pracy = 1;
             sem_v(semid, SEM_MUTEX);
-            printf("--> Budzenie procesów...\n");
+            printf("Budzenie procesów\n");
             for(int i=0; i < POJEMNOSC_TASMY + 5; i++) {
                 sem_v(semid, SEM_WOLNE); 
                 sem_v(semid, SEM_ZAJETE); 
