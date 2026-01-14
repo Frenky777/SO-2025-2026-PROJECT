@@ -29,7 +29,7 @@ int main() {
         if (mag->koniec_pracy && mag->ile_paczek == 0) {
         printf("TRUCK %d: Koniec zmiany i taśma pusta. Odjeżdżam.\n", getpid());
         break;
-}
+        }
 
        
         printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd\n", moj_pid);
@@ -37,9 +37,12 @@ int main() {
 
       
         sem_p(semid, SEM_MUTEX);
+
         mag->pid_truck = moj_pid;      
         mag->waga_ladunku_trucka = 0;  
-        wymuszony_odjazd = 0;          
+        mag->objetosc_ladunku_trucka = 0;
+        wymuszony_odjazd = 0;  
+
         sem_v(semid, SEM_MUTEX);
 
         printf("TRUCK %d: Podstawiony pod rampe Zaczynam zaladunek\n", moj_pid);
@@ -108,6 +111,18 @@ int main() {
             }
             // Pobieramy paczkę
             Paczka p = mag->tasma[mag->head];
+            if (mag->waga_ladunku_trucka + p.waga > LADOWNOSC_CI || 
+            mag->objetosc_ladunku_trucka + p.objetosc > OBJETOSC_CI) {
+        
+            // Nie mieści się
+            sem_v(semid, SEM_MUTEX);
+            sem_v(semid, SEM_ZAJETE); // Oddajemy semafor nie wzielismy paczki
+        
+            printf("TRUCK %d: Paczka (%.1f kg) sie nie miesci. ODJEZDZAM. Stan: %.1f kg\n", 
+               moj_pid, p.waga, mag->waga_ladunku_trucka);
+            break; // Przerywamy załadunek i odjeżdżamy
+            }
+            
             mag->head = (mag->head + 1) % POJEMNOSC_TASMY;
             mag->ile_paczek--;
             mag->aktualna_waga_tasmy -= p.waga;

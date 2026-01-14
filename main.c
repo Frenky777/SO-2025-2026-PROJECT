@@ -1,7 +1,12 @@
 #include "header.h"
 #include <sys/wait.h>
-
+void handle_sig1(int sig) {
+}
+void handle_sig2(int sig) {   
+}
 int main() {
+    signal(SIGUSR1, handle_sig1); 
+    signal(SIGUSR2, handle_sig2);
     // Tworzenie pliku klucza do ftok
     system("touch ."); 
 
