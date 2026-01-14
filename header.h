@@ -17,13 +17,13 @@
 
 #define ID_PROJEKTU 'M'
 #define MAX_WAGA_TASMY 400.0   // M 
-#define POJEMNOSC_TASMY 10     // K 
+#define POJEMNOSC_TASMY 15     // K 
 #define MAX_WAGA_PACZKI 25.0   //
-#define LADOWNOSC_CI 1000.0    // W 
+#define LADOWNOSC_CI 100.0    // W 
 #define OBJETOSC_CI 500        // V 
 
 
-#define LIMIT_CIEZAROWEK 3 //limit ciezarowek
+#define LIMIT_CIEZAROWEK 15//limit ciezarowek
 
 
 // --- SEMAFORY 

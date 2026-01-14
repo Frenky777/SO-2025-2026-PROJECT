@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
                 sem_v(semid, SEM_MUTEX);
                 sem_v(semid, SEM_WOLNE); 
 
-                //sleep(1); 
+                sleep(1); 
             }
 
 
