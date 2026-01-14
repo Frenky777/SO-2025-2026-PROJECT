@@ -126,7 +126,7 @@ int main() {
         sem_v(semid, SEM_DOK); 
 
         printf("Truck %d: Wyjazd w trase...\n", moj_pid);
-        sleep(5); 
+        sleep(TI); 
     }
 
     shmdt(mag);
