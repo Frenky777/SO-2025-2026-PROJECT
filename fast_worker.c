@@ -1,6 +1,6 @@
 #include "header.h"
 
-volatile int mam_robote = 0;
+volatile sig_atomic_t mam_robote = 0;
 void handle_sig2(int sig) {
     mam_robote = 1;
 }
@@ -29,11 +29,11 @@ int main() {
         if (mam_robote) {
             sem_p(semid, SEM_MUTEX);
              if (mag->pid_truck <= 0) {
-                // Jeśli brak trucka -> zwalniamy pamięć i próbujemy za chwilę
+                
                 sem_v(semid, SEM_MUTEX);
                 printf("P4: Brak ciężarówki. Czekam na wjazd...\n");
                 sleep(1); 
-                continue; // <-- TO JEST KLUCZ: Wracamy na początek, nie zerujemy zadania!
+                continue; 
             }
 
                 int r = rand() % 3;
