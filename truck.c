@@ -1,6 +1,6 @@
 #include "header.h"
 // flaga globalna
-volatile int wymuszony_odjazd = 0;
+volatile sig_atomic_t wymuszony_odjazd = 0;
 
 void handle_sig1(int sig) {
     wymuszony_odjazd = 1;
@@ -19,152 +19,115 @@ int main() {
     }
     Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);
 
-    double waga_ladunku = 0;
-    int obj_ladunku = 0;
     pid_t moj_pid = getpid();
     printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd\n", moj_pid);
     
     // PĘTLA GŁÓWNA 
     while (1) {
-        if (mag->koniec_pracy && mag->ile_paczek == 0) {
-        printf("TRUCK %d: Koniec zmiany i taśma pusta. Odjeżdżam.\n", getpid());
-        break;
-        }
 
-       
-        printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd\n", moj_pid);
         sem_p(semid, SEM_DOK);
 
-      
+
         sem_p(semid, SEM_MUTEX);
-
-        mag->pid_truck = moj_pid;      
-        mag->waga_ladunku_trucka = 0;  
+        mag->pid_truck = moj_pid;
+        mag->waga_ladunku_trucka = 0.0;
         mag->objetosc_ladunku_trucka = 0;
-        wymuszony_odjazd = 0;  
+        wymuszony_odjazd = 0;
+        
 
+        if (mag->koniec_pracy) {
+            sem_v(semid, SEM_MUTEX);
+            sem_v(semid, SEM_DOK);
+            break;
+        }
         sem_v(semid, SEM_MUTEX);
 
-        printf("TRUCK %d: Podstawiony pod rampe Zaczynam zaladunek\n", moj_pid);
+        printf("Truck %d: Podjechalem pod dok.\n", moj_pid);
 
-        
-        waga_ladunku = 0;
-        obj_ladunku = 0;
 
-        // PĘTLA ZAŁADUNKU PACZEK
         while (1) {
-            if (mag->koniec_pracy && mag->ile_paczek == 0) {
-            printf("TRUCK %d: Koniec pracy i taśma pusta. Zjeżdżam.\n", getpid());
-            break;
-}
-            
-           
             if (wymuszony_odjazd) {
-                printf("TRUCK %d: Otrzymalem nakaz odjazdu \n", moj_pid);
+                printf("Truck %d: Nakaz odjazdu!\n", moj_pid);
+                break;
+            }
+
+
+            struct sembuf op;
+            op.sem_num = SEM_ZAJETE;
+            op.sem_op = -1;
+            op.sem_flg = 0;
+
+            if (semop(semid, &op, 1) == -1) {
+                if (errno == EINTR) {
+                    if (wymuszony_odjazd){ break; 
+                    }
+                    continue;
+                }
+                perror("Blad semop truck");
+                break;
+            }
+
+
+            sem_p(semid, SEM_MUTEX);
+
+
+            if (mag->ile_paczek <= 0) {
+
+                sem_v(semid, SEM_MUTEX);
+                continue;
+            }
+
+
+            Paczka p = mag->tasma[mag->head];
+
+
+            if (mag->waga_ladunku_trucka + p.waga > LADOWNOSC_CI ||
+                mag->objetosc_ladunku_trucka + p.objetosc > OBJETOSC_CI) {
+                
+
+                printf("Truck %d: Pelny (%.1f kg). Odjezdzam.\n", moj_pid, mag->waga_ladunku_trucka);
+                
+                sem_v(semid, SEM_MUTEX);
+                
+
+                sem_v(semid, SEM_ZAJETE); 
+                
                 break; 
             }
 
-            
-            sem_p(semid, SEM_MUTEX);
-            double aktualna_waga_calosc = mag->waga_ladunku_trucka;
-            int aktualna_obj_calosc = mag->objetosc_ladunku_trucka; 
-            sem_v(semid, SEM_MUTEX);
 
-            
-            if (aktualna_waga_calosc >= LADOWNOSC_CI || aktualna_obj_calosc >= OBJETOSC_CI) {
-                printf("TRUCK %d: PELNA (%.1f kg / %d cm3) --- ODJEZDZAM ---\n", 
-                       moj_pid, aktualna_waga_calosc, aktualna_obj_calosc);
-                break;
-            }
-
-            errno = 0; 
-            sem_p(semid, SEM_ZAJETE);
-
-
-            if (errno == EINTR) {
-                if (wymuszony_odjazd) {
-                     break; 
-                }
-                continue; 
-            }
-
-
-            if (wymuszony_odjazd) {
-                sem_v(semid, SEM_ZAJETE); 
-                break;
-            }
-            
-
-           
-            if (wymuszony_odjazd) {
-                sem_v(semid, SEM_ZAJETE); // Oddajemy paczkę 
-                break;
-            }
-
-            sem_p(semid, SEM_MUTEX);
-
-            if (mag->ile_paczek <= 0) {
-                sem_v(semid, SEM_MUTEX);
-               
-                if (mag->koniec_pracy) break;
-                continue;
-            }
-            // Pobieramy paczkę
-            Paczka p = mag->tasma[mag->head];
-            if (mag->waga_ladunku_trucka + p.waga > LADOWNOSC_CI || 
-            mag->objetosc_ladunku_trucka + p.objetosc > OBJETOSC_CI) {
-        
-            // Nie mieści się
-            sem_v(semid, SEM_MUTEX);
-            sem_v(semid, SEM_ZAJETE); // Oddajemy semafor nie wzielismy paczki
-        
-            printf("TRUCK %d: Paczka (%.1f kg) sie nie miesci. ODJEZDZAM. Stan: %.1f kg\n", 
-               moj_pid, p.waga, mag->waga_ladunku_trucka);
-            break; // Przerywamy załadunek i odjeżdżamy
-            }
-            
             mag->head = (mag->head + 1) % POJEMNOSC_TASMY;
             mag->ile_paczek--;
             mag->aktualna_waga_tasmy -= p.waga;
-
             
-            mag->waga_ladunku_trucka += p.waga; 
+            mag->waga_ladunku_trucka += p.waga;
             mag->objetosc_ladunku_trucka += p.objetosc;
-            
-            
-            waga_ladunku = mag->waga_ladunku_trucka; 
-            obj_ladunku += p.objetosc;
+
+
+            double log_waga_ladunku = mag->waga_ladunku_trucka;
 
             sem_v(semid, SEM_MUTEX);
-            sem_v(semid, SEM_WOLNE); // zwalnianie miejsca workerom
 
-            printf("TRUCK %d: Biorę %c (%.1f kg). Ladunek: %.1f kg\n", moj_pid, p.typ, p.waga, waga_ladunku);
+
+            sem_v(semid, SEM_WOLNE);
+
             log_msg(semid, "Truck %d zabral paczke %c (%.1f kg). Stan ladunku: %.1f kg", 
-                    moj_pid, p.typ, p.waga, waga_ladunku);
+                    moj_pid, p.typ, p.waga, log_waga_ladunku);
             
-            //sleep(1); 
+
         }
 
-        // Wyjazd 
-        printf("TRUCK %d: Opuszczam dok\n", moj_pid);
-        
+
         sem_p(semid, SEM_MUTEX);
-        mag->pid_truck = 0;          
-        mag->waga_ladunku_trucka = 0; 
-        mag->objetosc_ladunku_trucka = 0;
+        mag->pid_truck = 0;
+        mag->waga_ladunku_trucka = 0.0; 
         sem_v(semid, SEM_MUTEX);
-        
-        sem_v(semid, SEM_DOK); // dla innej ciężarówki
 
-        if (mag->koniec_pracy) break;
+        sem_v(semid, SEM_DOK); 
 
-
-        printf("TRUCK %d: Rozwożę towar znikam na 5s\n", moj_pid);
+        printf("Truck %d: Wyjazd w trase...\n", moj_pid);
         sleep(5); 
-        printf("TRUCK %d: Wracam do magazynu\n", moj_pid);
     }
-
-
 
     shmdt(mag);
     return 0;

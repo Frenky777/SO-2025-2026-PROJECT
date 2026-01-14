@@ -55,49 +55,54 @@ int main(int argc, char *argv[]) {
             p.waga = ((rand() % 100) / 10.0) + 15.0;
         }
         //sleep(1); 
+        sem_p(semid, SEM_WOLNE);
 
-        while (1) {
-            if (mag->koniec_pracy) break;
+        // blokujemy dostep do pamieci
+        sem_p(semid, SEM_MUTEX);
 
-            // slot ilościowy
-            sem_p(semid, SEM_WOLNE);
-            // blokowanie pamieci
-            sem_p(semid, SEM_MUTEX);
+        // Jesli ktos w miedzyczasie oglosil koniec pracy
+        if (mag->koniec_pracy) {
+            sem_v(semid, SEM_MUTEX);
+            sem_v(semid, SEM_WOLNE); // Oddajemy pobrany slot
+            break;
+        }
 
-            if (mag->koniec_pracy) {
-            sem_v(semid, SEM_MUTEX); // Oddaj mutex
-            sem_v(semid, SEM_WOLNE); // Oddaj slot 
-            break; // Wyjdź z pętli
-            }
+        //Sprawdzenie wagi 
+        if (mag->aktualna_waga_tasmy + p.waga > MAX_WAGA_TASMY) {
+ 
+            
+            sem_v(semid, SEM_MUTEX); 
+            sem_v(semid, SEM_WOLNE); 
+            
+            usleep(100000); // 0.1 sekundy
 
-            // limit wagowy check
-            if (mag->aktualna_waga_tasmy + p.waga <= MAX_WAGA_TASMY) {
-                
-                mag->tasma[mag->tail] = p;
-                mag->tail = (mag->tail + 1) % POJEMNOSC_TASMY;
-                mag->ile_paczek++;
-                mag->aktualna_waga_tasmy += p.waga;
+            continue; 
+        }
 
-
-
-                sem_v(semid, SEM_MUTEX);
-                sem_v(semid, SEM_ZAJETE); // informujemy ciezarowke
-                printf("P%d: Polozyl %c (%.1f kg). Stan: %d/%d\n", id_prac, p.typ, p.waga, mag->ile_paczek, POJEMNOSC_TASMY);
-                log_msg(semid, "Pracownik P%d polozyl paczke %c (%.1f kg). Waga tasmy: %.1f kg", 
-                        id_prac, p.typ, p.waga, mag->aktualna_waga_tasmy);
-
-                break; 
-            } else {
-
-                sem_v(semid, SEM_MUTEX);
-                sem_v(semid, SEM_WOLNE); 
-
-                sleep(1); 
-            }
+        //Polozenie paczki
+        mag->tasma[mag->tail] = p;
+        mag->tail = (mag->tail + 1) % POJEMNOSC_TASMY;
+        mag->ile_paczek++;
+        mag->aktualna_waga_tasmy += p.waga;
 
 
+
+        double log_waga = mag->aktualna_waga_tasmy;
+        int log_ile = mag->ile_paczek;
+
+        sem_v(semid, SEM_MUTEX);
+
+
+        sem_v(semid, SEM_ZAJETE);
+
+        log_msg(semid, "Pracownik P%d polozyl paczke %c (%.1f kg). Waga tasmy: %.1f kg", 
+                id_prac, p.typ, p.waga, log_waga);
+        
+        
     }
-}
+
+        
+
 
     shmdt(mag);
     return 0;

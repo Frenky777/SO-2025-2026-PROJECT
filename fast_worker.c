@@ -26,15 +26,17 @@ int main() {
     while (1) {
         if (mag->koniec_pracy) break;
 
+        while (!mam_robote && !mag->koniec_pracy) {
+        usleep(1000); // Czekaj aktywnie 
+        }
+
         if (mam_robote) {
             sem_p(semid, SEM_MUTEX);
              if (mag->pid_truck <= 0) {
                 
-                sem_v(semid, SEM_MUTEX);
-                printf("P4: Brak ciężarówki. Czekam na wjazd...\n");
-                sleep(1); 
-                continue; 
-            }
+                printf("P4: Brak ciężarówki.\n");
+
+            } else {
 
                 int r = rand() % 3;
                 int obj = 0;
@@ -64,16 +66,14 @@ int main() {
                     log_msg(semid, "P4 wrzucil ekspres %.1f kg. Stan trucka: %.1f kg", 
                             waga_ekspresu, mag->waga_ladunku_trucka);
 
-                    kill(mag->pid_truck, SIGUSR2); // budzenie ciezarowki sygnalem
                 } else {
                     printf("P4: Ciężarówka pełna, nie zmieściłem ekspresu\n");
                 }
-            
+            }
             sem_v(semid, SEM_MUTEX);
             
             mam_robote = 0;
          }
-        sleep(1);
         }
         shmdt(mag);
         return 0;
