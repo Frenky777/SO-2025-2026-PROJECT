@@ -13,6 +13,14 @@
 #include <signal.h>
 #include <sys/time.h>
 #include <stdarg.h>
+
+#define RUMUNIA_BLUE   "\033[1;34m" // Niebieski truck
+#define RUMUNIA_DARK_BLUE   "\033[0;34m" // Ciemno niebieski truck
+#define RUMUNIA_YELLOW "\033[1;33m" // Zolty slave (worker)
+#define RUMUNIA_RED    "\033[1;31m" // Czerwony (fast worker)
+#define RUMUNIA_GREEN    "\033[1;32m" // Zielony do maina
+#define OCZYSZCZANIE    "\033[0m"    // Reset 
+
 //ftok
 
 #define ID_PROJEKTU 'M'  // do pamieci wspoldzielonej

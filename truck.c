@@ -20,7 +20,7 @@ int main() {
     Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);
 
     pid_t moj_pid = getpid();
-    printf("TRUCK %d: Dojechalem do firmy. Czekam na wjazd\n", moj_pid);
+    printf(RUMUNIA_BLUE"TRUCK %d: Dojechalem do firmy. Czekam na wjazd"OCZYSZCZANIE"\n", moj_pid);
     
     // PĘTLA GŁÓWNA 
     while (1) {
@@ -43,7 +43,7 @@ int main() {
         }
         sem_v(semid, SEM_MUTEX);
 
-        printf("Truck %d: Podjechalem pod dok.\n", moj_pid);
+        printf(RUMUNIA_BLUE"Truck %d: Podjechalem pod dok."OCZYSZCZANIE"\n", moj_pid);
 
 
         while (1) {
@@ -92,7 +92,7 @@ int main() {
                 mag->objetosc_ladunku_trucka + p.objetosc > OBJETOSC_CI) {
                 
 
-                printf("Truck %d: Pelny (%.1f kg). Odjezdzam.\n", moj_pid, mag->waga_ladunku_trucka);
+                printf(RUMUNIA_BLUE"Truck %d: Pelny (%.1f kg). Odjezdzam."OCZYSZCZANIE"\n", moj_pid, mag->waga_ladunku_trucka);
                 
                 sem_v(semid, SEM_MUTEX);
                 
@@ -118,6 +118,8 @@ int main() {
 
             sem_v(semid, SEM_WOLNE);
 
+            printf(RUMUNIA_BLUE"Truck %d zabral paczke %c (%.1f kg). Stan ladunku: %.1f kg"OCZYSZCZANIE"\n", 
+                    moj_pid, p.typ, p.waga, log_waga_ladunku);
             log_msg(semid, "Truck %d zabral paczke %c (%.1f kg). Stan ladunku: %.1f kg", 
                     moj_pid, p.typ, p.waga, log_waga_ladunku);
             
@@ -132,7 +134,7 @@ int main() {
 
         sem_v(semid, SEM_DOK); 
 
-        printf("Truck %d: Wyjazd w trase...\n", moj_pid);
+        printf(RUMUNIA_DARK_BLUE"Truck %d: Wyjazd w trase..."OCZYSZCZANIE"\n", moj_pid);
         sleep(TI); 
     }
 

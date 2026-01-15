@@ -20,7 +20,7 @@ int main() {
     mag->pid_p4 = getpid(); 
     sem_v(semid, SEM_MUTEX);
 
-    printf("P4: Czekam na wezwanie (PID: %d)\n", getpid());
+    printf(RUMUNIA_RED"P4: Czekam na wezwanie (PID: %d)"OCZYSZCZANIE"\n", getpid());
     srand(time(NULL) ^ getpid()); // do losowania
 
 while (1) {

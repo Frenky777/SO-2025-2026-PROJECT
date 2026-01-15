@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     }
     
     Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);
-    printf("Pracownik P%d zaczyna prace.\n", id_prac);
+    printf(RUMUNIA_YELLOW"Pracownik P%d zaczyna prace."OCZYSZCZANIE"\n", id_prac);
 
     while (1) {
         if (mag->koniec_pracy) break;
@@ -91,12 +91,15 @@ int main(int argc, char *argv[]) {
         int log_ile = mag->ile_paczek;
 
         sem_v(semid, SEM_MUTEX);
-
-
+        
         sem_v(semid, SEM_ZAJETE);
 
+        printf(RUMUNIA_YELLOW "P%d: Położył paczkę %c (%.1f kg). Waga taśmy: %.1f kg" OCZYSZCZANIE "\n", 
+               id_prac, p.typ, p.waga, log_waga);
+        
         log_msg(semid, "Pracownik P%d polozyl paczke %c (%.1f kg). Waga tasmy: %.1f kg", 
                 id_prac, p.typ, p.waga, log_waga);
+
         
         
     }

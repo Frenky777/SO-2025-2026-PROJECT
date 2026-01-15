@@ -8,7 +8,7 @@ int globalny_semid = -1;
 
 // Handler dla Ctrl+C 
 void handle_sigint(int sig) {
-    printf("\nMAIN: Otrzymano Ctrl+C. Sprzątanie\n");
+    printf(RUMUNIA_GREEN"\nMAIN: Otrzymano Ctrl+C. Sprzątanie"OCZYSZCZANIE"\n");
 
     
 
@@ -17,7 +17,7 @@ void handle_sigint(int sig) {
         if (semctl(globalny_semid, 0, IPC_RMID) == -1) {
             perror("MAIN: Błąd usuwania semaforów w handlerze");
         } else {
-            printf("MAIN: Semafory usunięte.\n");
+            printf(RUMUNIA_GREEN"MAIN: Semafory usunięte."OCZYSZCZANIE"\n");
         }
     }
 
@@ -26,7 +26,7 @@ void handle_sigint(int sig) {
         if (shmctl(globalny_shmid, IPC_RMID, NULL) == -1) {
             perror("MAIN: Błąd usuwania pamięci dzielonej w handlerze");
         } else {
-            printf("MAIN: Pamięć dzielona usunięta.\n");
+            printf(RUMUNIA_GREEN"MAIN: Pamięć dzielona usunięta."OCZYSZCZANIE"\n");
         }
     }
 
@@ -92,7 +92,7 @@ int main() {
     semctl(semid, SEM_ZAJETE, SETVAL, 0);      // Brak paczek
     semctl(semid, SEM_DOK, SETVAL, 1);
 
-    printf("START SYSTEMU \n");
+    printf(RUMUNIA_GREEN"START SYSTEMU"OCZYSZCZANIE" \n");
 
     clear_log(semid);
 
@@ -125,21 +125,21 @@ int main() {
 
     while (wait(NULL) > 0); 
     
-    printf("\nMAIN: Wszystkie procesy zakończyły pracę. Sprzątam system\n");
+    printf(RUMUNIA_GREEN"\nMAIN: Wszystkie procesy zakończyły pracę. Sprzątam system"OCZYSZCZANIE"\n");
 
 
     if (semctl(semid, 0, IPC_RMID) == -1) {
         perror("Błąd usuwania semaforów");
     } else {
-        printf("MAIN: Semafory usunięte.\n");
+        printf(RUMUNIA_GREEN"MAIN: Semafory usunięte."OCZYSZCZANIE"\n");
     }
 
     if (shmctl(shmid, IPC_RMID, NULL) == -1) {
         perror("Błąd usuwania pamięci dzielonej");
     } else {
-        printf("MAIN: Pamięć dzielona usunięta.\n");
+        printf(RUMUNIA_GREEN"MAIN: Pamięć dzielona usunięta."OCZYSZCZANIE"\n");
     }
     
-    printf("MAIN: Koniec programu.\n");
+    printf(RUMUNIA_GREEN"MAIN: Koniec programu."OCZYSZCZANIE"\n");
     return 0;
 }
