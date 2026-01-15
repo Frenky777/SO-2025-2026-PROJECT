@@ -34,10 +34,11 @@ int main() {
         mag->objetosc_ladunku_trucka = 0;
         wymuszony_odjazd = 0;
         
-
-        if (mag->koniec_pracy) {
+        // jesli koniec pracy sprawdza czy na tasmie jest 0 paczke jesli tak to koniec
+        if (mag->koniec_pracy && mag->ile_paczek == 0) {
             sem_v(semid, SEM_MUTEX);
             sem_v(semid, SEM_DOK);
+            printf("Truck %d: Koniec pracy i brak paczek\n", moj_pid);
             break;
         }
         sem_v(semid, SEM_MUTEX);
@@ -69,10 +70,16 @@ int main() {
 
 
             sem_p(semid, SEM_MUTEX);
-
-
+         
+             // naprawa problemu z pozostaniem paczek na tasmie
             if (mag->ile_paczek <= 0) {
-
+               
+                if (mag->koniec_pracy) {
+                    sem_v(semid, SEM_MUTEX);
+                    printf("Truck %d: Koniec pracy (tasma pusta). Wyjazd z doku.\n", moj_pid);
+                    break; 
+                }
+                
                 sem_v(semid, SEM_MUTEX);
                 continue;
             }

@@ -29,6 +29,9 @@ void sem_v(int semid, int sem_num) {
 }
 //logger
 void log_msg(int semid, const char *format, ...){ 
+    #if defined(LOGOWANIE_DO_PLIKU) && LOGOWANIE_DO_PLIKU == 0
+        return;
+    #endif
     sem_p(semid, SEM_MUTEX);
 
     FILE *f = fopen("symulacja.log", "a");

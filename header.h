@@ -15,7 +15,7 @@
 #include <stdarg.h>
 //ftok
 
-#define ID_PROJEKTU 'M'
+#define ID_PROJEKTU 'M'  // do pamieci wspoldzielonej
 #define MAX_WAGA_TASMY 400.0   // M 
 #define POJEMNOSC_TASMY 5     // K 
 #define MAX_WAGA_PACZKI 25.0   //
@@ -25,6 +25,7 @@
 
 #define LIMIT_CIEZAROWEK 15//limit ciezarowek
 
+#define LOGOWANIE_DO_PLIKU 1 // 1 Wlaczone, 0 wylaczone
 
 // --- SEMAFORY 
 #define SEM_MUTEX 0      // Chroni pamięć
