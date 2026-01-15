@@ -1,10 +1,49 @@
 #include "header.h"
 #include <sys/wait.h>
+
+
+// zmienne globalne zeby handler je widzial
+int globalny_shmid = -1;
+int globalny_semid = -1;
+
+// Handler dla Ctrl+C 
+void handle_sigint(int sig) {
+    printf("\nMAIN: Otrzymano Ctrl+C. Sprzątanie\n");
+
+    
+
+    // usun semafory
+    if (globalny_semid != -1) {
+        if (semctl(globalny_semid, 0, IPC_RMID) == -1) {
+            perror("MAIN: Błąd usuwania semaforów w handlerze");
+        } else {
+            printf("MAIN: Semafory usunięte.\n");
+        }
+    }
+
+    // usun pamiec wspoldzielona
+    if (globalny_shmid != -1) {
+        if (shmctl(globalny_shmid, IPC_RMID, NULL) == -1) {
+            perror("MAIN: Błąd usuwania pamięci dzielonej w handlerze");
+        } else {
+            printf("MAIN: Pamięć dzielona usunięta.\n");
+        }
+    }
+
+    kill(0, SIGKILL);
+    exit(0);
+}
+
+
 void handle_sig1(int sig) {
 }
 void handle_sig2(int sig) {   
 }
+
 int main() {
+    //sygnal do ctrl c
+    signal(SIGINT, handle_sigint);
+
     signal(SIGUSR1, handle_sig1); 
     signal(SIGUSR2, handle_sig2);
     // Tworzenie pliku klucza do ftok
@@ -27,6 +66,8 @@ int main() {
         perror("MAIN BLAD: shmget pamiec");
         exit(1);
     }
+    globalny_shmid = shmid; // przypisanie do zmiennnej globalnej
+
     int semid = semget(key, LICZBA_SEM, IPC_CREAT | 0666);
 
     if (semid == -1) {
@@ -34,7 +75,8 @@ int main() {
         shmctl(shmid, IPC_RMID, NULL);
         exit(1);
     }
-    
+    globalny_semid = semid; // przypisanie do zmiennnej globalnej
+
     // Inicjalizacja pamięci
     Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);
     mag->head = 0;
