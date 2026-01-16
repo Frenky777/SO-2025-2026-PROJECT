@@ -61,14 +61,14 @@ int main() {
         exit(1);
     }
     // Alokacja
-    int shmid = shmget(key, sizeof(Magazyn), IPC_CREAT | 0666);
+    int shmid = shmget(key, sizeof(Magazyn), IPC_CREAT | 0600);
     if (shmid == -1) {
         perror("MAIN BLAD: shmget pamiec");
         exit(1);
     }
     globalny_shmid = shmid; // przypisanie do zmiennnej globalnej
 
-    int semid = semget(key, LICZBA_SEM, IPC_CREAT | 0666);
+    int semid = semget(key, LICZBA_SEM, IPC_CREAT | 0600);
 
     if (semid == -1) {
         perror("MAIN BLAD: semget semafor");

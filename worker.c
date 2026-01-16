@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
 
     // podlaczenie do pamieci wspoldzielonej i zasobow
     key_t key = ftok(".", ID_PROJEKTU);
-    int semid = semget(key, LICZBA_SEM, 0666);
-    int shmid = shmget(key, sizeof(Magazyn), 0666);
+    int semid = semget(key, LICZBA_SEM, 0600);
+    int shmid = shmget(key, sizeof(Magazyn), 0600);
     
     if (shmid == -1 || semid == -1) {
         perror("Blad podlaczenia pracownika");

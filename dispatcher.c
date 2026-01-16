@@ -3,8 +3,8 @@
 int main() {
 
     key_t key = ftok(".", ID_PROJEKTU);
-    int semid = semget(key, LICZBA_SEM, 0666); // pobranie semaforow
-    int shmid = shmget(key, sizeof(Magazyn), 0666);
+    int semid = semget(key, LICZBA_SEM, 0600); // pobranie semaforow
+    int shmid = shmget(key, sizeof(Magazyn), 0600);
     if (shmid == -1 || semid == -1) {
         printf("BŁĄD: Nie mogę połączyć się z Magazynem.\n");
         exit(1);
@@ -24,7 +24,15 @@ int main() {
 
     int wybor;
     printf("Twoj wybor: ");
-    scanf("%d", &wybor);
+
+    // W dispatcher.c
+    if (scanf("%d", &wybor) != 1) {
+    printf("To nie jest liczba!\n");
+    while (getchar() != '\n'); // Czyszczenie bufora
+    continue;
+    }
+
+
 
     if (wybor == 1) {
         if (mag->pid_truck > 0) {
