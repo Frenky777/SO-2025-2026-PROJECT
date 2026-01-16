@@ -29,9 +29,9 @@
 #define MAX_WAGA_PACZKI 25.0   //
 #define LADOWNOSC_CI 100.0    // W 
 #define OBJETOSC_CI 500        // V 
-#define TI 10 // czas oczekiwania ciezarowek Ti
+#define TI 5 // czas oczekiwania ciezarowek Ti
 
-#define LIMIT_CIEZAROWEK 15//limit ciezarowek
+#define LIMIT_CIEZAROWEK 5//limit ciezarowek
 
 #define LOGOWANIE_DO_PLIKU 1 // 1 Wlaczone, 0 wylaczone
 

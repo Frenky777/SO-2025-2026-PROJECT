@@ -25,7 +25,7 @@ int main() {
     int wybor;
     printf("Twoj wybor: ");
 
-    // W dispatcher.c
+
     if (scanf("%d", &wybor) != 1) {
     printf("To nie jest liczba!\n");
     while (getchar() != '\n'); // Czyszczenie bufora

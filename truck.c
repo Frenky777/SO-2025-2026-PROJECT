@@ -49,6 +49,8 @@ int main() {
         while (1) {
             if (wymuszony_odjazd) {
                 printf("Truck %d: Nakaz odjazdu!\n", moj_pid);
+                log_msg(semid, "Truck %d wymuszony odjazd  ", // dodanie wymuszonego odjazdu logu
+                moj_pid);
                 break;
             }
 
