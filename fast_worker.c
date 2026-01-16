@@ -50,6 +50,10 @@ while (1) {
             
             double waga_ekspresu = (rand() % 230) / 10.0 + 1.0; 
 
+            sem_p(semid, SEM_MUTEX); //deklaracja priorytetu
+            mag->p4_priorytet = 1; 
+            sem_v(semid, SEM_MUTEX);
+
             printf("P4: Mam paczke ekspresowa %c (%.1f kg). Szukam ciezarowki...\n", 
                    typ, waga_ekspresu);
 
@@ -70,8 +74,9 @@ while (1) {
                         
                         printf("P4: WRZUCILEM PACZKE %.1f kg do Trucka %d. Stan: %.1f kg\n", 
                                waga_ekspresu, mag->pid_truck, mag->waga_ladunku_trucka);
-                        
-                         sem_v(semid, SEM_MUTEX); 
+
+                        mag->p4_priorytet = 0; 
+                        sem_v(semid, SEM_MUTEX); 
 
                         log_msg(semid, "P4 wrzucil ekspres %.1f kg do Trucka %d. Stan: %.1f kg", 
                                 waga_ekspresu, mag->pid_truck, mag->waga_ladunku_trucka);
@@ -90,8 +95,15 @@ while (1) {
                     usleep(2000);// Czekamy 
                 }
             }
+            if (mag->koniec_pracy) {
+                sem_p(semid, SEM_MUTEX);
+                mag->p4_priorytet = 0;
+                sem_v(semid, SEM_MUTEX);
+            }  // gdyby symulacja se zakonczyla zabezpiecznie
         
             mam_robote = 0; 
          }
     }
+    shmdt(mag);
+    return 0;
 }

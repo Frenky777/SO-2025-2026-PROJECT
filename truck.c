@@ -72,6 +72,13 @@ int main() {
 
 
             sem_p(semid, SEM_MUTEX);
+            while (mag->p4_priorytet == 1) {
+            sem_v(semid, SEM_MUTEX);  // oddanie klucza
+            usleep(1000);        
+            sem_p(semid, SEM_MUTEX);
+    
+
+            }
          
              // naprawa problemu z pozostaniem paczek na tasmie
             if (mag->ile_paczek <= 0) {

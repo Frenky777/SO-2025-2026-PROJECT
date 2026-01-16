@@ -62,6 +62,8 @@ typedef struct {
     pid_t pid_p4;
 
     int koniec_pracy;
+
+    int p4_priorytet; // naprawa problemu z priorytetem p4
 } Magazyn;
 
 
