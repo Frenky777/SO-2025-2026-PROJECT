@@ -8,7 +8,7 @@ void handle_sig1(int sig) {
 
 
 int main() {
-    signal(SIGUSR1, handle_sig1); //sygnal 1
+    signal(SIGUSR1, handle_sig1); //sygnal 1 wymuszony odjazd
     
     key_t key = ftok(".", ID_PROJEKTU);
     int semid = semget(key, LICZBA_SEM, 0600);
@@ -59,8 +59,8 @@ int main() {
             op.sem_num = SEM_ZAJETE;
             op.sem_op = -1;
             op.sem_flg = 0;
-
-            if (semop(semid, &op, 1) == -1) {
+            // jesli tasma pusta truck czeka
+            if (semop(semid, &op, 1) == -1) { 
                 if (errno == EINTR) {
                     if (wymuszony_odjazd){ break; 
                     }
@@ -72,7 +72,8 @@ int main() {
 
 
             sem_p(semid, SEM_MUTEX);
-            while (mag->p4_priorytet == 1) {
+
+            while (mag->p4_priorytet == 1) { // jesli p4 zglosci priorytet oddaje mutex i czeka
             sem_v(semid, SEM_MUTEX);  // oddanie klucza
             usleep(1000);        
             sem_p(semid, SEM_MUTEX);
@@ -93,7 +94,7 @@ int main() {
                 continue;
             }
 
-
+            // odczyt danych fifo
             Paczka p = mag->tasma[mag->head];
 
 
@@ -124,7 +125,7 @@ int main() {
 
             sem_v(semid, SEM_MUTEX);
 
-
+            // zwolnienie miejsca na tasmie
             sem_v(semid, SEM_WOLNE);
 
             printf(RUMUNIA_BLUE"Truck %d zabral paczke %c (%.1f kg). Stan ladunku: %.1f kg"OCZYSZCZANIE"\n", 
@@ -143,10 +144,10 @@ int main() {
 
         sem_v(semid, SEM_DOK); 
 
-        printf(RUMUNIA_DARK_BLUE"Truck %d: Wyjazd w trase..."OCZYSZCZANIE"\n", moj_pid);
+        printf(RUMUNIA_DARK_BLUE"Truck %d: Wyjazd w trase"OCZYSZCZANIE"\n", moj_pid);
         sleep(TI); 
     }
 
-    shmdt(mag);
+    shmdt(mag); // odlodzenie od pamieci
     return 0;
 }

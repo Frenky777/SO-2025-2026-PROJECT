@@ -4,9 +4,9 @@
 void sem_p(int semid, int sem_num) {
     struct sembuf bufor;
     bufor.sem_num = sem_num;
-    bufor.sem_op = -1; //-1
+    bufor.sem_op = -1; //-1 zmniejszenie wartosci semafora 
     bufor.sem_flg = 0;
-    while (semop(semid, &bufor, 1) == -1) {
+    while (semop(semid, &bufor, 1) == -1) { // obsluga przerwania przez sygnal
         if (errno == EINTR) {
             continue; 
         }
@@ -20,7 +20,7 @@ void sem_p(int semid, int sem_num) {
 void sem_v(int semid, int sem_num) {
     struct sembuf bufor;
     bufor.sem_num = sem_num;
-    bufor.sem_op = 1; //+1
+    bufor.sem_op = 1; //+1 zwiekszenie wartosci semafora
     bufor.sem_flg = 0;
     
     if (semop(semid, &bufor, 1) == -1) {
@@ -51,6 +51,7 @@ void log_msg(int semid, const char *format, ...){
     va_start(args, format);
     vfprintf(f, format, args);
     va_end(args);
+
 
     fprintf(f, "\n");
     fclose(f);

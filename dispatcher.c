@@ -36,7 +36,7 @@ int main() {
 
     if (wybor == 1) {
         if (mag->pid_truck > 0) {
-            kill(mag->pid_truck, SIGUSR1);
+            kill(mag->pid_truck, SIGUSR1); // wyslanie sygnalu kill do konkretnego pid
             printf("Wyslano rozkaz odjazdu do PID %d.\n", mag->pid_truck);
         } else {
             printf("Blad Brak ciezarowki\n");

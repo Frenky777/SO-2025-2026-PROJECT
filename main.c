@@ -54,21 +54,21 @@ int main() {
         exit(1);
     }
 
-    key_t key = ftok(".", ID_PROJEKTU);
+    key_t key = ftok(".", ID_PROJEKTU);  // tworzenie klucza ipc ftok dla zasobow
 
     if (key == -1) {
         perror("MAIN BLAD: ftok");
         exit(1);
     }
     // Alokacja
-    int shmid = shmget(key, sizeof(Magazyn), IPC_CREAT | 0600);
+    int shmid = shmget(key, sizeof(Magazyn), IPC_CREAT | 0600);  // alokacja pamieci dzielonej
     if (shmid == -1) {
         perror("MAIN BLAD: shmget pamiec");
         exit(1);
     }
     globalny_shmid = shmid; // przypisanie do zmiennnej globalnej
 
-    int semid = semget(key, LICZBA_SEM, IPC_CREAT | 0600);
+    int semid = semget(key, LICZBA_SEM, IPC_CREAT | 0600); // tworzenie zestawu semaforow
 
     if (semid == -1) {
         perror("MAIN BLAD: semget semafor");
@@ -78,7 +78,7 @@ int main() {
     globalny_semid = semid; // przypisanie do zmiennnej globalnej
 
     // Inicjalizacja pamięci
-    Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);
+    Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0); //przylaczanie pamieci shmat
     mag->head = 0;
     mag->tail = 0;
     mag->ile_paczek = 0;
@@ -98,11 +98,11 @@ int main() {
 
 
 
-    if (fork() == 0) { 
+    if (fork() == 0) {  // tworzenie procesu potomnego fork fast workera
         execl("./fast_worker", "fast_worker", NULL); 
         exit(0);  //dla p4
     }
-    // uruchamiamy 3 ciezarowki
+    // uruchamiamy  ciezarowki
     for(int i=0; i<LIMIT_CIEZAROWEK; i++) {
         if (fork() == 0) { 
             char buf[15];

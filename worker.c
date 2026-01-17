@@ -55,7 +55,8 @@ int main(int argc, char *argv[]) {
             p.waga = ((rand() % 100) / 10.0) + 15.0;
         }
         //sleep(1); 
-        sem_p(semid, SEM_WOLNE);
+        
+        sem_p(semid, SEM_WOLNE); // jesli tasma jest pelna proces zasypia tutay
 
         // blokujemy dostep do pamieci
         sem_p(semid, SEM_MUTEX);
@@ -79,7 +80,7 @@ int main(int argc, char *argv[]) {
             continue; 
         }
 
-        //Polozenie paczki
+        //Polozenie paczki zapis do pamieci wspoldzielonej
         mag->tasma[mag->tail] = p;
         mag->tail = (mag->tail + 1) % POJEMNOSC_TASMY;
         mag->ile_paczek++;
@@ -89,10 +90,10 @@ int main(int argc, char *argv[]) {
 
         double log_waga = mag->aktualna_waga_tasmy;
         int log_ile = mag->ile_paczek;
-
-        sem_v(semid, SEM_MUTEX);
+    
+        sem_v(semid, SEM_MUTEX); //zwolnienie mutexa 
         
-        sem_v(semid, SEM_ZAJETE);
+        sem_v(semid, SEM_ZAJETE); // sygnal ze jest nowa paczka 
 
         printf(RUMUNIA_YELLOW "P%d: Położył paczkę %c (%.1f kg). Waga taśmy: %.1f kg" OCZYSZCZANIE "\n", 
                id_prac, p.typ, p.waga, log_waga);
