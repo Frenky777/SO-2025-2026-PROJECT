@@ -24,7 +24,7 @@
 //ftok
 
 #define ID_PROJEKTU 'M'  // do pamieci wspoldzielonej
-#define MAX_WAGA_TASMY 400.0   // M 
+#define MAX_WAGA_TASMY 40.0   // M 
 #define POJEMNOSC_TASMY 5     // K 
 #define MAX_WAGA_PACZKI 25.0   //
 #define LADOWNOSC_CI 100.0    // W 
