@@ -54,7 +54,7 @@ while (1) {
             mag->p4_priorytet = 1;   // blokowanie trucka
             sem_v(semid, SEM_MUTEX);
 
-            printf("P4: Mam paczke ekspresowa %c (%.1f kg). Szukam ciezarowki\n", 
+            printf(RUMUNIA_RED"P4: Mam paczke ekspresowa %c (%.1f kg). Szukam ciezarowki"OCZYSZCZANIE"\n", 
                    typ, waga_ekspresu);
 
 
@@ -72,7 +72,7 @@ while (1) {
                         mag->waga_ladunku_trucka += waga_ekspresu; // zapis do ladunku ciezarowki omija kolejke
                         mag->objetosc_ladunku_trucka += obj;
                         
-                        printf("P4: WRZUCILEM PACZKE %.1f kg do Trucka %d. Stan: %.1f kg\n", 
+                        printf(RUMUNIA_RED"P4: WRZUCILEM PACZKE %.1f kg do Trucka %d. Stan: %.1f kg"OCZYSZCZANIE"\n", 
                                waga_ekspresu, mag->pid_truck, mag->waga_ladunku_trucka);
 
                         mag->p4_priorytet = 0; //oddanie priorytetu klucza moze dalej truck pracowac
@@ -85,7 +85,7 @@ while (1) {
                         break; 
                     } else {
 
-                        printf("P4: Truck %d pelny/brak miejsca. Czekam na nastepny\n", mag->pid_truck);
+                        printf(RUMUNIA_RED"P4: Truck %d pelny/brak miejsca. Czekam na nastepny"OCZYSZCZANIE"\n", mag->pid_truck);
                         sem_v(semid, SEM_MUTEX); 
                         usleep(2000); // Czekamy 
                     }

@@ -6,13 +6,13 @@ int main() {
     int semid = semget(key, LICZBA_SEM, 0600); // pobranie semaforow
     int shmid = shmget(key, sizeof(Magazyn), 0600);
     if (shmid == -1 || semid == -1) {
-        printf("BŁĄD: Nie mogę połączyć się z Magazynem.\n");
+        printf(RUMUNIA_RED"BŁĄD: Nie mogę połączyć się z Magazynem."OCZYSZCZANIE"\n");
         exit(1);
     }
     Magazyn *mag = (Magazyn*)shmat(shmid, NULL, 0);
 
     while(1) {
-    printf("\nPANEL DYSPOZYTORA \n");
+    printf(RUMUNIA_RED"\nPANEL DYSPOZYTORA "OCZYSZCZANIE"\n");
     printf("PID Trucka w doku: %d\n", mag->pid_truck);
     printf("PID Fast Workera: %d\n", mag->pid_p4);
     printf("----------------------------------------------------------\n");
@@ -23,7 +23,7 @@ int main() {
     printf("----------------------------------------------------------\n");
 
     int wybor;
-    printf("Twoj wybor: ");
+    printf(RUMUNIA_RED"Twoj wybor: "OCZYSZCZANIE);
 
 
     if (scanf("%d", &wybor) != 1) {
