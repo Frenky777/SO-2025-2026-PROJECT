@@ -124,23 +124,23 @@ Omija kolejkę taśmy transportowej i ładuje paczkę bezpośrednio na ciężar�
 Poniżej znajdują się bezpośrednie odnośniki do fragmentów kodu realizujących kluczowe wymagania systemowe:
 
 1. **Tworzenie procesów (`fork`, `exec`, `wait`)**
-   - Zarządzanie procesami potomnymi w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L101]
+   - Zarządzanie procesami potomnymi w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L101-L122]
 
 2. **Pamięć Współdzielona (System V Shared Memory)**
-   - Alokacja pamięci (`shmget`) w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L64]
-   - Dołączanie pamięci (`shmat`) w `worker.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/worker.c#L25]
-   - Usuwanie pamięci (`shmctl`) w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L131]
+   - Alokacja pamięci (`shmget`) w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L64-L68]
+   - Dołączanie pamięci (`shmat`) w `worker.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/worker.c#L15-L25]
+   - Usuwanie pamięci (`shmctl`) w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L131-L135]
 
 3. **Semafory (System V Semaphores)**
-   - Implementacja operacji P (`semop`) w `sem.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/sem.c#L4]
-   - Implementacja operacji V (`semop`) w `sem.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/sem.c#L20]
-   - Inicjalizacja wartości (`semctl`) w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L89]
-   - Synchronizacja dostępu (sekcja krytyczna) w `truck.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/truck.c#L31]
+   - Implementacja operacji P (`semop`) w `sem.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/sem.c#L4-L17]
+   - Implementacja operacji V (`semop`) w `sem.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/sem.c#L20-L29]
+   - Inicjalizacja wartości (`semctl`) w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L89-L93]
+   - Synchronizacja dostępu (sekcja krytyczna) w `truck.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/truck.c#L31-L44]
 
 4. **Sygnały (`signal`, `kill`)**
-   - Wysyłanie sygnałów sterujących w `dispatcher.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/dispatcher.c#L37]
-   - Obsługa sygnału wymuszonego odjazdu w `truck.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/truck.c#L50]
-   - Bezpieczne zamykanie systemu (SIGINT) w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L10]
+   - Wysyłanie sygnałów sterujących w `dispatcher.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/dispatcher.c#L37-L50]
+   - Obsługa sygnału wymuszonego odjazdu w `truck.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/truck.c#L50-L55]
+   - Bezpieczne zamykanie systemu (SIGINT) w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L10-L35]
 
 5. **Obsługa plików **
    - Logowanie zdarzeń do pliku w `sem.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/e6e692b96bfae4a54e92e745399d35a983a5c5ca/sem.c#L31-L60]
