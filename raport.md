@@ -143,7 +143,7 @@ Poniżej znajdują się bezpośrednie odnośniki do fragmentów kodu realizując
    - Bezpieczne zamykanie systemu (SIGINT) w `main.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/main.c#L10]
 
 5. **Obsługa plików **
-   - Logowanie zdarzeń do pliku w `sem.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/98b7d3149dfc86611062cb8e87470d75f314e054/sem.c#L31]
+   - Logowanie zdarzeń do pliku w `sem.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/e6e692b96bfae4a54e92e745399d35a983a5c5ca/sem.c#L31-L60]
 
 Scenariusze Testowe:
 
