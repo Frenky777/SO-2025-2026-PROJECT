@@ -29,30 +29,30 @@ int main(int argc, char *argv[]) {
         if (mag->koniec_pracy) break;
 
         //przygotowanie packzi
-        Paczka p;
-        p.id_pracownika = id_prac;
+        Paczka paczka;
+        paczka.id_pracownika = id_prac;
         
 
         if (id_prac == 1) {
             // P1 robi tylko małe A
-            p.typ = 'A';
-            p.objetosc = 10; 
+            paczka.typ = 'A';
+            paczka.objetosc = 10; 
             // Waga 0.1 - 5.0 kg
-            p.waga = ((rand() % 50) / 10.0) + 0.1;
+            paczka.waga = ((rand() % 50) / 10.0) + 0.1;
         }
         else if (id_prac == 2) {
             // P2 robi tylko średnie B
-            p.typ = 'B';
-            p.objetosc = 20;
+            paczka.typ = 'B';
+            paczka.objetosc = 20;
             // Waga 5.0 - 15.0 kg
-            p.waga = ((rand() % 100) / 10.0) + 5.0;
+            paczka.waga = ((rand() % 100) / 10.0) + 5.0;
         }
         else {
             // P3 robi tylko duże C 
-            p.typ = 'C';
-            p.objetosc = 40;
+            paczka.typ = 'C';
+            paczka.objetosc = 40;
             // Waga 15.0 - 25.0 kg
-            p.waga = ((rand() % 100) / 10.0) + 15.0;
+            paczka.waga = ((rand() % 100) / 10.0) + 15.0;
         }
         //sleep(1); 
         
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
         }
 
         //Sprawdzenie wagi 
-        if (mag->aktualna_waga_tasmy + p.waga > MAX_WAGA_TASMY) {
+        if (mag->aktualna_waga_tasmy + paczka.waga > MAX_WAGA_TASMY) {
  
             
             sem_v(semid, SEM_MUTEX); 
@@ -81,10 +81,10 @@ int main(int argc, char *argv[]) {
         }
 
         //Polozenie paczki zapis do pamieci wspoldzielonej
-        mag->tasma[mag->tail] = p;
+        mag->tasma[mag->tail] = paczka;
         mag->tail = (mag->tail + 1) % POJEMNOSC_TASMY;
         mag->ile_paczek++;
-        mag->aktualna_waga_tasmy += p.waga;
+        mag->aktualna_waga_tasmy += paczka.waga;
 
 
 
@@ -96,10 +96,10 @@ int main(int argc, char *argv[]) {
         sem_v(semid, SEM_ZAJETE); // sygnal ze jest nowa paczka 
 
         printf(RUMUNIA_YELLOW "P%d: Położył paczkę %c (%.1f kg). Waga taśmy: %.1f kg" OCZYSZCZANIE "\n", 
-               id_prac, p.typ, p.waga, log_waga);
+               id_prac, paczka.typ, paczka.waga, log_waga);
         
         log_msg(semid, "Pracownik P%d polozyl paczke %c (%.1f kg). Waga tasmy: %.1f kg", 
-                id_prac, p.typ, p.waga, log_waga);
+                id_prac, paczka.typ, paczka.waga, log_waga);
 
         
         

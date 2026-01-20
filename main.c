@@ -97,27 +97,41 @@ int main() {
     clear_log(semid);
 
 
-
-    if (fork() == 0) {  // tworzenie procesu potomnego fork fast workera
-        execl("./fast_worker", "fast_worker", NULL); 
-        exit(0);  //dla p4
+    //fast worker
+    pid_t pid_p4 = fork();
+    if (pid_p4 == -1) {
+        perror("MAIN BLAD: Nie udalo sie utworzyc procesu Fast Workera (fork)");
+    } else if (pid_p4 == 0) {
+        execl("./fast_worker", "fast_worker", NULL);
+        perror("MAIN BLAD: Nie udalo sie uruchomic ./fast_worker (execl)");
+        exit(1); 
     }
-    // uruchamiamy  ciezarowki
+
+    // ciezarowki
     for(int i=0; i<LIMIT_CIEZAROWEK; i++) {
-        if (fork() == 0) { 
+        pid_t pid_truck = fork();
+        if (pid_truck == -1) {
+            perror("MAIN BLAD: Blad fork dla Trucka");
+        } else if (pid_truck == 0) { 
             char buf[15];
             execl("./truck", "truck", buf, NULL); 
-            exit(0); 
+            perror("MAIN BLAD: Blad execl dla Trucka");
+            exit(1); 
         }
     }
     
-    // Uruchamiamy 3 pracowników
+    //3 pracowników
     for(int i=1; i<=3; i++) {
-        if (fork() == 0) {
+        pid_t pid_w = fork();
+        if (pid_w == -1) {
+            perror("MAIN BLAD: Blad fork dla Workera");
+        } else if (pid_w == 0) {
             char buf[10];
             sprintf(buf, "%d", i);
             execl("./worker", "worker", buf, NULL);
-            exit(0);
+            
+            perror("MAIN BLAD: Blad execl dla Workera");
+            exit(1);
         }
     }
 

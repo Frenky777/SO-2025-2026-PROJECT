@@ -55,27 +55,14 @@ int main() {
             }
 
 
-            struct sembuf op;
-            op.sem_num = SEM_ZAJETE;
-            op.sem_op = -1;
-            op.sem_flg = 0;
-            // jesli tasma pusta truck czeka
-            if (semop(semid, &op, 1) == -1) { 
-                if (errno == EINTR) {
-                    if (wymuszony_odjazd){ break; 
-                    }
-                    continue;
-                }
-                perror("Blad semop truck");
-                break;
-            }
+            sem_p(semid, SEM_ZAJETE);
 
 
             sem_p(semid, SEM_MUTEX);
 
             while (mag->p4_priorytet == 1) { // jesli p4 zglosci priorytet oddaje mutex i czeka
             sem_v(semid, SEM_MUTEX);  // oddanie klucza
-            usleep(1000);        
+            //usleep(1000);        
             sem_p(semid, SEM_MUTEX);
     
 
@@ -95,11 +82,11 @@ int main() {
             }
 
             // odczyt danych fifo
-            Paczka p = mag->tasma[mag->head];
+            Paczka paczka = mag->tasma[mag->head];
 
 
-            if (mag->waga_ladunku_trucka + p.waga > LADOWNOSC_CI ||
-                mag->objetosc_ladunku_trucka + p.objetosc > OBJETOSC_CI) {
+            if (mag->waga_ladunku_trucka + paczka.waga > LADOWNOSC_CI ||
+                mag->objetosc_ladunku_trucka + paczka.objetosc > OBJETOSC_CI) {
                 
 
                 printf(RUMUNIA_BLUE"Truck %d: Pelny (%.1f kg). Odjezdzam."OCZYSZCZANIE"\n", moj_pid, mag->waga_ladunku_trucka);
@@ -115,10 +102,10 @@ int main() {
 
             mag->head = (mag->head + 1) % POJEMNOSC_TASMY;
             mag->ile_paczek--;
-            mag->aktualna_waga_tasmy -= p.waga;
+            mag->aktualna_waga_tasmy -= paczka.waga;
             
-            mag->waga_ladunku_trucka += p.waga;
-            mag->objetosc_ladunku_trucka += p.objetosc;
+            mag->waga_ladunku_trucka += paczka.waga;
+            mag->objetosc_ladunku_trucka += paczka.objetosc;
 
 
             double log_waga_ladunku = mag->waga_ladunku_trucka;
@@ -129,9 +116,9 @@ int main() {
             sem_v(semid, SEM_WOLNE);
 
             printf(RUMUNIA_BLUE"Truck %d zabral paczke %c (%.1f kg). Stan ladunku: %.1f kg"OCZYSZCZANIE"\n", 
-                    moj_pid, p.typ, p.waga, log_waga_ladunku);
+                    moj_pid, paczka.typ, paczka.waga, log_waga_ladunku);
             log_msg(semid, "Truck %d zabral paczke %c (%.1f kg). Stan ladunku: %.1f kg", 
-                    moj_pid, p.typ, p.waga, log_waga_ladunku);
+                    moj_pid, paczka.typ, paczka.waga, log_waga_ladunku);
             
 
         }
