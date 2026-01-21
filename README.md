@@ -150,19 +150,21 @@ Scenariusze Testowe:
 
 Test 1: Przepełnienie bufora taśmy (Synchronizacja)
 Cel: Sprawdzenie poprawności modelu Producent-Konsument.
+Na zdjęciu widzimy poprawne dzialanie tasmy i synchronizacje semaforow 
 
 
 Test 2: Priorytet paczki ekspresowej (P4)
 Cel: Weryfikacja mechanizmu priorytetów i obsługi sygnałów.
-
+widac ze p4 wrzuca paczke priorytetowo przy uzyciu sygnalow 
 
 Test 3: Przekroczenie udźwigu taśmy
 Cel: Weryfikacja logiki biznesowej i ograniczeń fizycznych.
-
+w logach widac ze pracownicy nie wrzucaja wiecej paczaek niz wynosi waga max waga tasmy
 Test 4: Wymuszony odjazd
 Cel: Sprawdzenie obsługi sygnału SIGUSR1 przez ciężarówkę.
-
+ciezarowka odjezdza po dotaniu sygnalu
 
 Test 5: Bezpieczne zamykanie i czyszczenie zasobów
 Cel: Weryfikacja braku wycieków zasobów IPC.
+program zamyka sie usuwa pamiec wspoldzielona/ semafory i czysci po sobie nie zostawiajac procesow zombie 
 

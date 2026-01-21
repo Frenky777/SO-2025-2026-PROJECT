@@ -28,7 +28,7 @@ while (1) {
 
         // Czekanie na sygnał od dyspozytora
         while (!mam_robote && !mag->koniec_pracy) {
-            usleep(1000); // Czekaj 
+            //usleep(1000); // Czekaj 
         }
 
         if (mam_robote) {
@@ -87,12 +87,12 @@ while (1) {
 
                         printf(RUMUNIA_RED"P4: Truck %d pelny/brak miejsca. Czekam na nastepny"OCZYSZCZANIE"\n", mag->pid_truck);
                         sem_v(semid, SEM_MUTEX); 
-                        usleep(2000); // Czekamy 
+                       // usleep(2000); // Czekamy 
                     }
                 } else {
                     // Brak ciężarówki w doku
                     sem_v(semid, SEM_MUTEX); 
-                    usleep(2000);// Czekamy 
+                    //usleep(2000);// Czekamy 
                 }
             }
             if (mag->koniec_pracy) {
