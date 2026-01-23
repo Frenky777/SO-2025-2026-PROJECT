@@ -145,26 +145,61 @@ Poniżej znajdują się bezpośrednie odnośniki do fragmentów kodu realizując
 5. **Obsługa plików **
    - Logowanie zdarzeń do pliku w `sem.c`: [https://github.com/Frenky777/SO-2025-2026-PROJECT/blob/e6e692b96bfae4a54e92e745399d35a983a5c5ca/sem.c#L31-L60]
 
-Scenariusze Testowe:
+## Scenariusze Testowe
+
+Poniżej przedstawiam zestawienie przeprowadzonych testów weryfikujących poprawność działania systemu.
+
+### 1. Przepełnienie bufora taśmy (Synchronizacja)
+*Test modelu Producent-Konsument.*
+* **Jak wykonać:** Uruchomienie symulacji ze standardowymi parametrami (ustawionymi w pliku nagłówkowym).
+* **Cel:** Sprawdzenie, czy semafory poprawnie blokują producentów, gdy bufor jest pełny.
+* **Wynik:** Mechanizm synchronizacji działa poprawnie. Taśma nie ulega przepełnieniu, a procesy czekają na zwolnienie miejsca (zgodnie z założeniami semaforów).
+
+### 2. Priorytet paczki ekspresowej (P4)
+*Weryfikacja obsługi priorytetów.*
+* **Jak wykonać:** Wysłanie sygnału do procesu P4 (zgodnie z instrukcją: `sygnał 2`).
+* **Cel:** Sprawdzenie, czy proces P4 potrafi wymusić pierwszeństwo dostępu do taśmy.
+* **Wynik:** P4 skutecznie "wpycha się" w kolejkę. Po otrzymaniu sygnału proces ten uzyskuje dostęp do zasobów szybciej niż standardowi pracownicy.
+
+### 3. Przekroczenie udźwigu taśmy
+*Test logiki biznesowej i ograniczeń fizycznych.*
+* **Jak wykonać:** Zmniejszenie parametru ładowności/udźwigu taśmy w konfiguracji.
+* **Cel:** Upewnienie się, że suma wag paczek nie przekroczy dopuszczalnego limitu.
+* **Wynik:** Logi potwierdzają działanie zabezpieczeń. Pracownicy wstrzymują się z załadunkiem, jeśli waga nowej paczki miałaby przekroczyć `MAX_WAGA_TASMY`.
+
+### 4. Wymuszony odjazd ciężarówki
+*Obsługa przerwań i sygnałów niestandardowych.*
+* **Jak wykonać:** Wysłanie sygnału do Ciężarówki (zgodnie z instrukcją: `sygnał 1` / `SIGUSR1`).
+* **Cel:** Sprawdzenie, czy ciężarówka odjedzie na żądanie, nawet jeśli nie jest pełna.
+* **Wynik:** Ciężarówka reaguje natychmiastowo. Po otrzymaniu sygnału przerywa oczekiwanie (stan `sem_wait`) i odjeżdża z obecnym ładunkiem.
+
+### 5. Bezpieczne zamykanie i czyszczenie zasobów
+*Test stabilności i zarządzania pamięcią (Graceful Shutdown).*
+* **Jak wykonać:** Wysłanie sygnału zakończenia (`sygnał 3` lub `CTRL+C`).
+* **Cel:** Weryfikacja, czy system nie pozostawia wycieków pamięci ani "wiszących" semaforów.
+* **Wynik:** Program kończy działanie w sposób kontrolowany. Pamięć współdzielona i semafory są poprawnie usuwane, a w systemie nie pozostają procesy zombie.
 
 
-Test 1: Przepełnienie bufora taśmy (Synchronizacja)
-Cel: Sprawdzenie poprawności modelu Producent-Konsument.
-Na zdjęciu widzimy poprawne dzialanie tasmy i synchronizacje semaforow 
+## Problemy i rozwiązania
 
+Projekt okazał się świetnym poligonem doświadczalnym, zwłaszcza w kwestii synchronizacji procesów. Oto lista błędów, które spędzały mi sen z powiek, i sposoby, w jakie je pokonałem:
 
-Test 2: Priorytet paczki ekspresowej (P4)
-Cel: Weryfikacja mechanizmu priorytetów i obsługi sygnałów.
-widac ze p4 wrzuca paczke priorytetowo przy uzyciu sygnalow 
+1. **Zmora wiszących semaforów**
+   Każda awaria programu zostawiała w systemie "sieroty" – zablokowane zasoby, przez które ponowne uruchomienie aplikacji sypało błędami.
+   > **Fix:** Dodałem solidną obsługę `SIGINT`. Teraz program sprząta po sobie (usuwa semafory i pamięć) nawet po wciśnięciu `Ctrl+C`.
 
-Test 3: Przekroczenie udźwigu taśmy
-Cel: Weryfikacja logiki biznesowej i ograniczeń fizycznych.
-w logach widac ze pracownicy nie wrzucaja wiecej paczaek niz wynosi waga max waga tasmy
-Test 4: Wymuszony odjazd
-Cel: Sprawdzenie obsługi sygnału SIGUSR1 przez ciężarówkę.
-ciezarowka odjezdza po dotaniu sygnalu
+2. **Nadaktywny Fast Worker**
+   Proces P4 był tak szybki, że nie dopuszczał innych do głosu (Mutexa). Ciężarówka stała w korku, bo Worker ciągle zajmował "skrzyżowanie".
+   > **Fix:** Zaimplementowałem mechanizm "ustępowania pierwszeństwa". Jeśli Worker nie może pracować, musi jawnie oddać zasoby, dając szansę Ciężarówce.
 
-Test 5: Bezpieczne zamykanie i czyszczenie zasobów
-Cel: Weryfikacja braku wycieków zasobów IPC.
-program zamyka sie usuwa pamiec wspoldzielona/ semafory i czysci po sobie nie zostawiajac procesow zombie 
+3. **Chaos na taśmie **
+   Początkowo zdarzało się, że nowe paczki nadpisywały te nieodebrane, albo Ciężarówka ładowała powietrze.
+   > **Fix:** Rozdzieliłem zadania semaforów. Jeden pilnuje tylko tego, czy jest miejsce (liczy sloty), a drugi chroni moment samego zapisu, żeby nikt sobie nie wchodził w drogę.
 
+4. **Wyścigi w terminalu**
+   Przy 5 procesach logi mieszały się tak, że nie dało się ustalić chronologii zdarzeń.
+   > **Fix:** Każdy proces (np. Truck, Worker) ma swój kolor w terminalu, co pozwala jednym rzutem oka ocenić sytuację.
+
+5. **(Sygnały)**
+   Ciężarówka ignorowała polecenie odjazdu, jeśli akurat spała, czekając na semaforze.
+   > **Fix:** Obsłużyłem przerwanie funkcji systemowej (`EINTR`). Teraz, gdy sygnał budzi proces, ten sprawdza flagę priorytetową zamiast wracać do spania.
